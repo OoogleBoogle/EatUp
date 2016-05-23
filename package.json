@@ -2,7 +2,7 @@
   "name": "eatup",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.jsx",
   "scripts": {
     "test": "mocha --compilers js:babel-register test/**/*.js*",
     "start:server": "nodemon ./index.js",
