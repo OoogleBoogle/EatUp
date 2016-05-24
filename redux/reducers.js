@@ -11,11 +11,7 @@ var initialState = [{
   rating: null
 }];
 
-//name: action.data.groups[0].items[0].venue.name
-//url: action.data.groups[0].items[0].venue.url
-
 exports.restaurantReducer = function(state, action) {
-  // console.log('in the reducer: ', action);
   state = state || initialState;
   if (action.type === actions.GET_RESTAURANT_SUCCESS) {
     console.log(action.data.groups[0].items[0].venue)
@@ -35,14 +31,5 @@ exports.restaurantReducer = function(state, action) {
   }
   else if (action.type === actions.GET_RESTAURANT_ERROR) {
     console.log(action.err.response.status);
-    // var newState = update(state, url: {$set {name: }})
   }
 }
-
-// module.exports = restaurantReducer;
-
-// url: ...
-// photo
-// name
-// address
-// rating

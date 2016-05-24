@@ -16,7 +16,6 @@ var getRestaurant = function(long, lat, foodType) {
       if (result.status < 200 || result.status >= 300) {
         var err = new Error(result.statusText);
         err.response = result;
-        // console.log('err status', err.response.status);
         throw err;
       }
       return result;
@@ -25,11 +24,9 @@ var getRestaurant = function(long, lat, foodType) {
       return data.json();
     })
     .then(function(data) {
-      // console.log('in then');
       return dispatch(getRestaurantSuccess(data.response));
     })
     .catch(function(err) {
-      // console.log('in the catch');
       return dispatch(getRestaurantError(err));
     })
   }
@@ -37,7 +34,6 @@ var getRestaurant = function(long, lat, foodType) {
 
 var GET_RESTAURANT_SUCCESS = 'GET_RESTAURANT_SUCCESS';
 var getRestaurantSuccess = function(data) {
-  // console.log("data: ", data);
   return {
     type: GET_RESTAURANT_SUCCESS,
     data: data
@@ -47,7 +43,6 @@ var getRestaurantSuccess = function(data) {
 
 var GET_RESTAURANT_ERROR = 'GET_RESTAURANT_ERROR';
 var getRestaurantError = function(err) {
-  // console.log("err: ", err.status);
   return {
     type: GET_RESTAURANT_ERROR,
     err: err
