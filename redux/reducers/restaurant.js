@@ -1,6 +1,5 @@
-var actions = require('./actions');
+var actions = require('../actions/restaurant');
 var update = require('react-addons-update');
-
 
 var initialState = [{
   url: null,
@@ -14,7 +13,7 @@ var initialState = [{
 exports.restaurantReducer = function(state, action) {
   state = state || initialState;
   if (action.type === actions.GET_RESTAURANT_SUCCESS) {
-    console.log(action.data.groups[0].items[0].venue)
+    // console.log(action.data.groups[0].items[0].venue)
 
     var newState = update(state, {0: {
       $set: {
@@ -27,9 +26,14 @@ exports.restaurantReducer = function(state, action) {
       }
     }})
     console.log(newState);
-    return newState;
+    state = newState;
   }
   else if (action.type === actions.GET_RESTAURANT_ERROR) {
     console.log(action.err.response.status);
   }
+  else {
+    state.name = 'test';
+  }
+
+  return state;
 }

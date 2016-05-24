@@ -1,5 +1,5 @@
 require('isomorphic-fetch');
-var ids = require('./secrets.js');
+var ids = require('../secrets.js');
 
 var getRestaurant = function(long, lat, foodType) {
   var options = {
@@ -38,7 +38,7 @@ var getRestaurantSuccess = function(data) {
     type: GET_RESTAURANT_SUCCESS,
     data: data
    }
-}
+};
 
 
 var GET_RESTAURANT_ERROR = 'GET_RESTAURANT_ERROR';
@@ -47,7 +47,9 @@ var getRestaurantError = function(err) {
     type: GET_RESTAURANT_ERROR,
     err: err
   }
-}
+};
+
+
 
 exports.GET_RESTAURANT_SUCCESS = GET_RESTAURANT_SUCCESS;
 exports.getRestaurantSuccess = getRestaurantSuccess;

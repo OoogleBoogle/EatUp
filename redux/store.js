@@ -3,7 +3,7 @@ var createStore = redux.createStore;
 var applyMiddleware = redux.applyMiddleware;
 var thunk = require('redux-thunk').default;
 
-var reducers = require('./reducers');
+var combined = require('./reducers/combined');
 
-var store = createStore(reducers.restaurantReducer, applyMiddleware(thunk));
+var store = createStore(combined.combined, applyMiddleware(thunk));
 module.exports  = store;
