@@ -1,9 +1,8 @@
+require('../db/connect');
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
 var bodyParser = require('body-parser');
-var userSchema = require('./schema').userSchema;
-
-mongoose.connect('mongodb://localhost/');
+var User = require('../model/user');
 
 mongoose.connection.on('error', function(err) {
     console.error('COULD NOT CONNECT. Error:', err);
@@ -11,15 +10,17 @@ mongoose.connection.on('error', function(err) {
 
 
 // MODELS
-var User = mongoose.model('User', userSchema);
+
 // END MODELS
 
 
 var testUser = new User({
-    name: 'Stone Cold Steve Austin',
+    firstname: 'Stone Cold',
+    lastname: 'Steve Austin',
     email: 'austin316@gmail.com',
     food: 'French',
-    location: 'Austin, Texas'
+    city: 'Austin',
+    state: 'Texas',
 });
 
 testUser.save(function(err) {
@@ -28,20 +29,31 @@ testUser.save(function(err) {
     }
 });
 
-var findaUser = function(name) {
-    testUser.findOne({
+
+var findUser = function(name) {
+    User.findOne({
         name: name
-    }, function(err, testUser) {
-        if (err || !testUser) {
+    }, function(err, user) {
+        if (err) {
             console.log("USER NOT FOUND", name);
             mongoose.disconnect();
             return;
         }
-        console.log("USER FOUND!", testUser.name);
+        console.log("USER FOUND!", user);
         mongoose.disconnect();
     });
 };
 
+User.find(function(err, user) {
+        if (err) {
+            errback(err);
+            return;
+        }
+        console.log(user);
+    });
+
+findUser('Stone Cold Steve Austin');
+findUser('Kaeside');
 //FIND USER BY FOOD AND location
 
 
