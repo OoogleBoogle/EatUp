@@ -18,9 +18,11 @@ var testUser = new User({
     firstname: 'Stone Cold',
     lastname: 'Steve Austin',
     email: 'austin316@gmail.com',
-    food: 'French',
-    city: 'Austin',
-    state: 'Texas',
+    food: 'French', //talk with connie about expanding food taste selection
+    location: {
+        city: 'Austin',
+        state: 'Texas'
+    }
 });
 
 testUser.save(function(err) {
@@ -29,6 +31,11 @@ testUser.save(function(err) {
     }
 });
 
+var createUser = function() { //give variable names to connie for creating user and finding user
+    User.create(function() {
+
+    });
+};
 
 var findUser = function(name) {
     User.findOne({
@@ -39,21 +46,32 @@ var findUser = function(name) {
             mongoose.disconnect();
             return;
         }
-        console.log("USER FOUND!", user);
+        console.log("USER FOUND!", name);
         mongoose.disconnect();
     });
 };
 
 User.find(function(err, user) {
-        if (err) {
-            errback(err);
-            return;
-        }
-        console.log(user);
-    });
+    if (err) {
+        errback(err);
+        return;
+    }
+    console.log(user);
+});
 
 findUser('Stone Cold Steve Austin');
 findUser('Kaeside');
+
+//BEGIN ADDTL FEATURES
+
+
+//SCHEMA FOR MESSAGES
+
+//Locking People Out from meeting up with other people once they commit to a date for that day only
+
+
+// END OF ADDTL FEATURES
+
 //FIND USER BY FOOD AND location
 
 
