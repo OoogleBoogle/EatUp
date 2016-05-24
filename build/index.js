@@ -59,13 +59,13 @@
 	    var geoOptions = {
 	      timeout: 10 * 1000
 	    };
-	
+	    var that = this;
 	    var geoSuccess = function geoSuccess(position) {
 	      startPos = position;
-	      userLocation = {
-	        latitude: startPos.coords.latitude,
-	        longitude: startPos.coords.longitude
-	      };
+	      that.setState({
+	        lat: position.coords.latitude,
+	        long: position.coords.longitude
+	      });
 	      // this.props.dispatch(actions.saveLocation(userLocation));
 	    };
 	    var geoError = function geoError(error) {
@@ -81,13 +81,14 @@
 	  },
 	  getRestaurant: function getRestaurant(event) {
 	    event.preventDefault();
+	    console.log(event.target);
 	    console.log('getRestaurant', userLocation);
-	    var latitude = parseInt(userLocation.latitude);
-	    var longitude = parseInt(userLocation.longitude);
+	    var latitude = parseInt(this.state.lat);
+	    var longitude = parseInt(this.state.long);
 	    var foodSelector = document.getElementById("foodType");
-	    var foodType = foodSelector.options[foodSelector.selectedIndex].value;
+	    var foodType = foodSelector.value;
 	    console.log('foodtype', foodType);
-	    this.props.dispatch(actions.getRestaurant());
+	    this.props.dispatch(actions.getRestaurant(latitude, longitude, foodType));
 	  },
 	  render: function render() {
 	    //TODO: if the textboxes are all filled out, diabled = false
@@ -118,7 +119,7 @@
 	  render: function render() {
 	    return React.createElement(
 	      'form',
-	      { onSubmit: this.preventRefresh, 'class': 'restaurantSearch' },
+	      { onSubmit: this.props.getRestaurants, 'class': 'restaurantSearch' },
 	      React.createElement(
 	        'div',
 	        null,
@@ -194,7 +195,7 @@
 	          'Mediterranean'
 	        )
 	      ),
-	      React.createElement(FormButton, { submitFunction: this.props.getRestaurants, text: 'Let\'s eat up!' })
+	      React.createElement(FormButton, { text: 'Let\'s eat up!' })
 	    );
 	  }
 	});
@@ -206,7 +207,7 @@
 	    var disabled = true;
 	    return React.createElement(
 	      'button',
-	      { type: 'submit', onSubmit: this.props.submitFunction, disabled: this.props.disabled },
+	      { type: 'submit' },
 	      this.props.text
 	    );
 	  }
