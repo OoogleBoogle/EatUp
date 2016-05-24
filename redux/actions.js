@@ -19,12 +19,26 @@ exports.getRestaurant = function(long, lat) {
       }
     })
     .catch(function(err) {
-      console.log(err);
+      return dispatch(getRestaurantError(err));
     })
     .then(function(data) {
-      // TODO: Process api result.
+      return dispatch(getRestaurantSuccess(data));
     })
   }
 };
 
 //https://api.foursquare.com/v2/venues/explore?ll=37.7890387,-122.41610359999999&client_id=V0WSPXBBDZJRJ2UNDN0QSKHG5LA2U1BEQH1KWUVNOFURT2HQ&client_secret=P14RQDZ4TS2OF5URP5RMMCLVJQZTM1YE2HX5XGB1JP0L1J2N&limit=1&v=20150501
+
+exports.GET_RESTAURANT_ERROR = 'GET_RESTAURANT_ERROR';
+exports.getRestaurantSuccess = function(data) {
+  type: GET_RESTAURANT_SUCCESS,
+  data: data
+}
+
+
+
+exports.GET_RESTAURANT_SUCCESS = 'GET_RESTAURANT_SUCCESS';
+exports.getRestaurantError = function(err) {
+  type: GET_RESTAURANT_ERROR,
+   err: err
+}
