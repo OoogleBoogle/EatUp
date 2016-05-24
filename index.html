@@ -5,7 +5,39 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
+  <header>
+    <h1>EatUp</h1>
+    <p>Find dining companions near you</p>
+  </header>
+  <section>
+    <form class="restaurantSearch">
+      <div>
+        <input type="text" placeholder="First name"></input>
+        <input type="text" placeholder="Last name"></input>
+      </div>
+      <div>
+        <input type="text" placeholder="Enter your email..."></input>
+      </div>
+      <div>
+        <input type="text" id="startLat" hidden="true"></input>
+        <input type="text" id="startLon" hidden="true"></input>
+      </div>
+      <div>What do you want to eat today?</div>
+      <select>
+        <option value="chinese">Chinese</option>
+        <option value="indian">Indian</option>
+        <option value="mexican">Mexican</option>
+        <option value="thai">Thai</option>
+        <option value="japanese">Japanese</option>
+        <option value="vietnamese">Vietnamese</option>
+        <option value="ethiopian">Ethiopian</option>
+      </select>
+      <div>
+        <button type="submit">Let's eat up!</button>
+      </div>
+    </form>
+  </section>
   <div class="app"></div>
-  <script src="build/index.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>
