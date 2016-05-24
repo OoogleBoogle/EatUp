@@ -48,12 +48,46 @@
 	
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(38);
+	var userLocation = {};
 	
 	var EatUp = React.createClass({
 	  displayName: 'EatUp',
 	
-	  getRestaurant: function getRestaurant() {
-	    this.props.dispatch.actions.getRestaurant();
+	  componentDidMount: function componentDidMount() {
+	    console.log('function called');
+	    var startPos;
+	    var geoOptions = {
+	      timeout: 10 * 1000
+	    };
+	
+	    var geoSuccess = function geoSuccess(position) {
+	      startPos = position;
+	      userLocation = {
+	        latitude: startPos.coords.latitude,
+	        longitude: startPos.coords.longitude
+	      };
+	      // this.props.dispatch(actions.saveLocation(userLocation));
+	    };
+	    var geoError = function geoError(error) {
+	      console.log('Error occurred. Error code: ' + error.code);
+	      // error.code can be:
+	      //   0: unknown error
+	      //   1: permission denied
+	      //   2: position unavailable (error response from location provider)
+	      //   3: timed out
+	    };
+	
+	    navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
+	  },
+	  getRestaurant: function getRestaurant(event) {
+	    event.preventDefault();
+	    console.log('getRestaurant', userLocation);
+	    var latitude = parseInt(userLocation.latitude);
+	    var longitude = parseInt(userLocation.longitude);
+	    var foodSelector = document.getElementById("foodType");
+	    var foodType = foodSelector.options[foodSelector.selectedIndex].value;
+	    console.log('foodtype', foodType);
+	    this.props.dispatch(actions.getRestaurant());
 	  },
 	  render: function render() {
 	    //TODO: if the textboxes are all filled out, diabled = false
@@ -70,8 +104,7 @@
 	        null,
 	        'Find dining companions near you!'
 	      ),
-	      React.createElement(Form, null),
-	      React.createElement(FormButton, { submitFunction: this.getRestaurant, text: 'Let\'s eat up!' })
+	      React.createElement(Form, { getRestaurants: this.getRestaurant })
 	    );
 	  }
 	});
@@ -89,19 +122,13 @@
 	      React.createElement(
 	        'div',
 	        null,
-	        React.createElement('input', { type: 'text', placeholder: 'First name' }),
-	        React.createElement('input', { type: 'text', placeholder: 'Last name' })
+	        React.createElement('input', { type: 'text', ref: 'firstName', placeholder: 'First name' }),
+	        React.createElement('input', { type: 'text', ref: 'lastName', placeholder: 'Last name' })
 	      ),
 	      React.createElement(
 	        'div',
 	        null,
-	        React.createElement('input', { type: 'text', placeholder: 'Enter your email...' })
-	      ),
-	      React.createElement(
-	        'div',
-	        null,
-	        React.createElement('input', { type: 'text', id: 'startLat', hidden: 'true' }),
-	        React.createElement('input', { type: 'text', id: 'startLon', hidden: 'true' })
+	        React.createElement('input', { type: 'text', ref: 'email', placeholder: 'Enter your email...' })
 	      ),
 	      React.createElement(
 	        'div',
@@ -110,7 +137,7 @@
 	      ),
 	      React.createElement(
 	        'select',
-	        { 'class': 'foodType' },
+	        { id: 'foodType' },
 	        React.createElement(
 	          'option',
 	          { value: 'chinese' },
@@ -166,7 +193,8 @@
 	          { value: 'mediterranean' },
 	          'Mediterranean'
 	        )
-	      )
+	      ),
+	      React.createElement(FormButton, { submitFunction: this.props.getRestaurants, text: 'Let\'s eat up!' })
 	    );
 	  }
 	});
@@ -233,30 +261,6 @@
 	    )
 	  );
 	};
-	
-	// window.onload = function() {
-	//   console.log('function called');
-	//   var startPos;
-	//   var geoOptions = {
-	//      timeout: 10 * 1000
-	//   }
-	//
-	//   var geoSuccess = function(position) {
-	//     startPos = position;
-	//     document.getElementById('startLat').value = startPos.coords.latitude;
-	//     document.getElementById('startLon').value = startPos.coords.longitude;
-	//   };
-	//   var geoError = function(error) {
-	//     console.log('Error occurred. Error code: ' + error.code);
-	//     // error.code can be:
-	//     //   0: unknown error
-	//     //   1: permission denied
-	//     //   2: position unavailable (error response from location provider)
-	//     //   3: timed out
-	//   };
-	//
-	//   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
-	// };
 	
 	document.addEventListener('DOMContentLoaded', function () {
 	  ReactDOM.render(React.createElement(EatUp, null), document.getElementById('app'));

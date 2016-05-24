@@ -1,9 +1,43 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var userLocation = {};
 
 var EatUp = React.createClass({
-  getRestaurant: function() {
-    this.props.dispatch.actions.getRestaurant();
+  componentDidMount: function() {
+    console.log('function called');
+    var startPos;
+    var geoOptions = {
+       timeout: 10 * 1000
+    }
+
+    var geoSuccess = function(position) {
+      startPos = position;
+      userLocation = {
+        latitude: startPos.coords.latitude,
+        longitude: startPos.coords.longitude
+      }
+      // this.props.dispatch(actions.saveLocation(userLocation));
+    };
+    var geoError = function(error) {
+      console.log('Error occurred. Error code: ' + error.code);
+      // error.code can be:
+      //   0: unknown error
+      //   1: permission denied
+      //   2: position unavailable (error response from location provider)
+      //   3: timed out
+    };
+
+    navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
+  },
+  getRestaurant: function(event) {
+    event.preventDefault();
+    console.log('getRestaurant', userLocation);
+    var latitude = parseInt(userLocation.latitude);
+    var longitude = parseInt(userLocation.longitude);
+    var foodSelector = document.getElementById("foodType");
+    var foodType = foodSelector.options[foodSelector.selectedIndex].value;
+    console.log('foodtype', foodType);
+    this.props.dispatch(actions.getRestaurant());
   },
   render: function() {
     //TODO: if the textboxes are all filled out, diabled = false
@@ -11,12 +45,11 @@ var EatUp = React.createClass({
       <header>
         <h1>EatUp</h1>
         <p>Find dining companions near you!</p>
-        <Form />
-        <FormButton submitFunction={this.getRestaurant} text="Let's eat up!"/>
+        <Form getRestaurants={this.getRestaurant} />
       </header>
     )
   }
-})
+});
 
 var Form = React.createClass({
   preventRefresh: function(event) {
@@ -26,18 +59,14 @@ var Form = React.createClass({
     return (
       <form onSubmit={this.preventRefresh} class="restaurantSearch">
         <div>
-          <input type="text" placeholder="First name"></input>
-          <input type="text" placeholder="Last name"></input>
+          <input type="text" ref="firstName" placeholder="First name"></input>
+          <input type="text" ref="lastName" placeholder="Last name"></input>
         </div>
         <div>
-          <input type="text" placeholder="Enter your email..."></input>
-        </div>
-        <div>
-          <input type="text" id="startLat" hidden="true"></input>
-          <input type="text" id="startLon" hidden="true"></input>
+          <input type="text" ref="email" placeholder="Enter your email..."></input>
         </div>
         <div>What do you want to eat today?</div>
-        <select class="foodType">
+        <select id="foodType">
           <option value="chinese">Chinese</option>
           <option value="indian">Indian</option>
           <option value="mexican">Mexican</option>
@@ -50,6 +79,7 @@ var Form = React.createClass({
           <option value="russian">Russian</option>
           <option value="mediterranean">Mediterranean</option>
         </select>
+        <FormButton submitFunction={this.props.getRestaurants} text="Let's eat up!"/>
       </form>
     );
   }
@@ -93,30 +123,6 @@ var ConfirmedPage = function() {
     </div>
   )
 }
-
-// window.onload = function() {
-//   console.log('function called');
-//   var startPos;
-//   var geoOptions = {
-//      timeout: 10 * 1000
-//   }
-//
-//   var geoSuccess = function(position) {
-//     startPos = position;
-//     document.getElementById('startLat').value = startPos.coords.latitude;
-//     document.getElementById('startLon').value = startPos.coords.longitude;
-//   };
-//   var geoError = function(error) {
-//     console.log('Error occurred. Error code: ' + error.code);
-//     // error.code can be:
-//     //   0: unknown error
-//     //   1: permission denied
-//     //   2: position unavailable (error response from location provider)
-//     //   3: timed out
-//   };
-//
-//   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
-// };
 
 document.addEventListener('DOMContentLoaded', function(){
     ReactDOM.render(<EatUp />, document.getElementById('app'));
