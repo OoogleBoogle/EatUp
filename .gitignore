@@ -1,1 +1,3 @@
 node_modules
+redux/secrets.js
+.sass-cache
