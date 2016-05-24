@@ -88,6 +88,8 @@
 	    var foodSelector = document.getElementById("foodType");
 	    var foodType = foodSelector.value;
 	    console.log('foodtype', foodType);
+	    console.log('lat', latitude);
+	    console.log('long', longitude);
 	    this.props.dispatch(actions.getRestaurant(latitude, longitude, foodType));
 	  },
 	  render: function render() {
@@ -219,8 +221,8 @@
 	  render: function render() {
 	    return React.createElement(
 	      'button',
-	      { type: 'submit', onSubmit: this.props.confirmFunction },
-	      'I would eat that'
+	      { type: 'submit', onClick: this.props.confirmFunction },
+	      this.props.text
 	    );
 	  }
 	});
@@ -245,7 +247,7 @@
 	      React.createElement(
 	        'div',
 	        null,
-	        React.createElement(ConfirmButton, null)
+	        React.createElement(ConfirmButton, { text: 'I\'d eat that' })
 	      )
 	    );
 	  }
