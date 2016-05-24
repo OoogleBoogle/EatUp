@@ -1,11 +1,11 @@
 var combineReducers = require('redux').combineReducers;
 
-var location = require('./location');
+var user = require('./user').userReducer;
 var restaurant = require('./restaurant').restaurantReducer;
 
 var reducers = combineReducers({
   restaurant: restaurant,
-	location: location
+	user: user
 });
 
 exports.combined = reducers;
