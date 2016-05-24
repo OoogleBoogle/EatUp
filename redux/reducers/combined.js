@@ -8,4 +8,4 @@ var reducers = combineReducers({
 	user: user
 });
 
-exports.combined = reducers;
+exports.reducers = reducers;

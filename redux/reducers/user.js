@@ -1,7 +1,7 @@
 var actions = require('../actions/user');
 
 var initialState = {
-  confirmed: false
+  confirmed: false // placeholder value until we know exactly what we want here.
 }
 
 exports.userReducer = function(state, action) {
