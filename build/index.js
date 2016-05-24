@@ -49,6 +49,33 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(38);
 	
+	var EatUp = React.createClass({
+	  displayName: 'EatUp',
+	
+	  getRestaurant: function getRestaurant() {
+	    this.props.dispatch.actions.getRestaurant();
+	  },
+	  render: function render() {
+	    //TODO: if the textboxes are all filled out, diabled = false
+	    return React.createElement(
+	      'header',
+	      null,
+	      React.createElement(
+	        'h1',
+	        null,
+	        'EatUp'
+	      ),
+	      React.createElement(
+	        'p',
+	        null,
+	        'Find dining companions near you!'
+	      ),
+	      React.createElement(Form, null),
+	      React.createElement(FormButton, { submitFunction: this.getRestaurant, text: 'Let\'s eat up!' })
+	    );
+	  }
+	});
+	
 	var Form = React.createClass({
 	  displayName: 'Form',
 	
@@ -83,7 +110,7 @@
 	      ),
 	      React.createElement(
 	        'select',
-	        null,
+	        { 'class': 'foodType' },
 	        React.createElement(
 	          'option',
 	          { value: 'chinese' },
@@ -118,17 +145,53 @@
 	          'option',
 	          { value: 'ethiopian' },
 	          'Ethiopian'
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        null,
+	        ),
 	        React.createElement(
-	          'button',
-	          { type: 'submit' },
-	          '"Let/\'s eat up!"'
+	          'option',
+	          { value: 'french' },
+	          'French'
+	        ),
+	        React.createElement(
+	          'option',
+	          { value: 'korean' },
+	          'Korean'
+	        ),
+	        React.createElement(
+	          'option',
+	          { value: 'russian' },
+	          'Russian'
+	        ),
+	        React.createElement(
+	          'option',
+	          { value: 'mediterranean' },
+	          'Mediterranean'
 	        )
 	      )
+	    );
+	  }
+	});
+	
+	var FormButton = React.createClass({
+	  displayName: 'FormButton',
+	
+	  render: function render() {
+	    var disabled = true;
+	    return React.createElement(
+	      'button',
+	      { type: 'submit', onSubmit: this.props.submitFunction, disabled: this.props.disabled },
+	      this.props.text
+	    );
+	  }
+	});
+	
+	var ConfirmButton = React.createClass({
+	  displayName: 'ConfirmButton',
+	
+	  render: function render() {
+	    return React.createElement(
+	      'button',
+	      { type: 'submit', onSubmit: this.props.confirmFunction },
+	      'I would eat that'
 	    );
 	  }
 	});
@@ -153,42 +216,50 @@
 	      React.createElement(
 	        'div',
 	        null,
-	        React.createElement(
-	          'button',
-	          { type: 'submit' },
-	          'I\'d eat that!'
-	        )
+	        React.createElement(ConfirmButton, null)
 	      )
 	    );
 	  }
 	});
 	
-	window.onload = function () {
-	  console.log('function called');
-	  var startPos;
-	  var geoOptions = {
-	    timeout: 10 * 1000
-	  };
-	
-	  var geoSuccess = function geoSuccess(position) {
-	    startPos = position;
-	    document.getElementById('startLat').value = startPos.coords.latitude;
-	    document.getElementById('startLon').value = startPos.coords.longitude;
-	  };
-	  var geoError = function geoError(error) {
-	    console.log('Error occurred. Error code: ' + error.code);
-	    // error.code can be:
-	    //   0: unknown error
-	    //   1: permission denied
-	    //   2: position unavailable (error response from location provider)
-	    //   3: timed out
-	  };
-	
-	  navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
+	var ConfirmedPage = function ConfirmedPage() {
+	  return React.createElement(
+	    'div',
+	    { 'class': 'confirmation' },
+	    React.createElement(
+	      'p',
+	      null,
+	      'You\'ve been confirmed! As soon as we find a match, we\'ll let you know!'
+	    )
+	  );
 	};
 	
+	// window.onload = function() {
+	//   console.log('function called');
+	//   var startPos;
+	//   var geoOptions = {
+	//      timeout: 10 * 1000
+	//   }
+	//
+	//   var geoSuccess = function(position) {
+	//     startPos = position;
+	//     document.getElementById('startLat').value = startPos.coords.latitude;
+	//     document.getElementById('startLon').value = startPos.coords.longitude;
+	//   };
+	//   var geoError = function(error) {
+	//     console.log('Error occurred. Error code: ' + error.code);
+	//     // error.code can be:
+	//     //   0: unknown error
+	//     //   1: permission denied
+	//     //   2: position unavailable (error response from location provider)
+	//     //   3: timed out
+	//   };
+	//
+	//   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
+	// };
+	
 	document.addEventListener('DOMContentLoaded', function () {
-	  ReactDOM.render(React.createElement(Form, null), document.getElementById('app'));
+	  ReactDOM.render(React.createElement(EatUp, null), document.getElementById('app'));
 	});
 
 /***/ },
