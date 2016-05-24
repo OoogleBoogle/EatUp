@@ -7,14 +7,17 @@ mongoose.connect('mongodb://localhost/geospatial_db', function(err) {
 });
 
 var userSchema = new Schema({
-    name: String,
+    firstname: String,
+    lastname: String,
     email: String,
-    location: String,
+    city: String, //[latitude, longitude]
+    state: String,
     food: String,
-    date: {
-        type: Date,
-        default: Date.now
-    },
+    date: Date.now
+    //{
+    //    type: Date,
+    //    default: Date.now
+    //},
 });
 
 exports.userSchema = userSchema;

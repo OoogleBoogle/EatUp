@@ -7,7 +7,7 @@ var userSchema = require('./schema').userSchema;
 
 mongoose.connect('mongodb://localhost/');
 
-mongoose.connection.on('error', function(err){
+mongoose.connection.on('error', function(err) {
     console.error('COULD NOT CONNECT. Error:', err);
 });
 
@@ -24,15 +24,27 @@ var testUser = new User({
     location: 'Austin, Texas'
 });
 
-testUser.save(function(err){
-    if(err) {
+testUser.save(function(err) {
+    if (err) {
         return 'USER DID NOT SAVE!';
     }
 });
 
-testUser.findOne({name: name}, function (err, testUser) {});
+var findaUser = function(name) {
+    testUser.findOne({
+        name: name
+    }, function(err, testUser) {
+        if (err || !testUser) {
+            console.log("USER NOT FOUND", name);
+            mongoose.disconnect();
+            return;
+        }
+        console.log("USER FOUND!", testUser.name);
+        mongoose.disconnect();
+    });
+};
 
-
+//FIND USER BY FOOD AND location
 
 
 
