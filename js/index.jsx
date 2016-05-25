@@ -1,9 +1,14 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var userLocation = {};
+var actions = require('../redux/actions');
+var Provider = require('react-redux').Provider;
+var store = require('../redux/store.js');
+
 var Confirmation = require('./confirmation.jsx');
 var Form = require('./form.jsx');
 var Confirmed = require('./confirmed.jsx');
+
+var connect = require('react-redux').connect;
 
 var EatUp = React.createClass({
   componentDidMount: function() {
@@ -42,7 +47,7 @@ var EatUp = React.createClass({
     console.log('foodtype', foodType);
     console.log('lat', latitude);
     console.log('long', longitude);
-    this.props.dispatch(actions.getRestaurant(latitude, longitude, foodType));
+    this.props.dispatch(actions.getRestaurant(longitude, latitude, foodType));
   },
   saveUser: function(event) {
     event.preventDefault();
@@ -64,6 +69,19 @@ var EatUp = React.createClass({
   }
 });
 
+var mapStateToProps = function(state, props) {
+  return {
+    eatup: state
+  };
+};
+
+var Container = connect(mapStateToProps)(EatUp);
+
+
 document.addEventListener('DOMContentLoaded', function(){
-    ReactDOM.render(<EatUp />, document.getElementById('app'));
+    ReactDOM.render(
+      <Provider store={store}>
+        <EatUp />
+      </Provider>, document.getElementById('app')
+    );
 });

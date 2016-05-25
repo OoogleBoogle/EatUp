@@ -1,4 +1,6 @@
 var React = require('react');
+var connect = require('react-redux').connect;
+var actions = require('../redux/actions');
 
 var ConfirmedPage = function() {
   return (
@@ -7,5 +9,7 @@ var ConfirmedPage = function() {
     </div>
   )
 }
+
+var Container = connect(mapStateToProps)(ConfirmedPage);
 
 module.exports = Container;
