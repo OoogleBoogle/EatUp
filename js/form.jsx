@@ -1,6 +1,6 @@
 var React = require('react');
 var connect = require('react-redux').connect;
-var actions = require('../redux/actions/user.js');
+var actions = require('../redux/actions/restaurant.js');
 
 var router = require('react-router');
 var Link = require('react-router').Link;
@@ -10,10 +10,17 @@ var Route = router.Route;
 var Form = React.createClass({
   preventRefresh: function(event) {
     event.preventDefault();
+    console.log('form');
+    this.props.getRestaurant({
+      firstName: this.refs.firstName.value,
+      lastName: this.refs.lastName.value,
+      email: this.refs.email.value,
+      foodType: this.refs.foodType.value
+    });
   },
   render: function() {
     return (
-      <form onSubmit={this.props.getRestaurants} class="restaurantSearch">
+      <form onSubmit={this.preventRefresh} class="restaurantSearch">
         <div>
           <input type="text" ref="firstName" placeholder="First name"></input>
           <input type="text" ref="lastName" placeholder="Last name"></input>
@@ -22,7 +29,7 @@ var Form = React.createClass({
           <input type="text" ref="email" placeholder="Enter your email..."></input>
         </div>
         <div>What do you want to eat today?</div>
-        <select id="foodType">
+        <select ref="foodType">
           <option value="chinese">Chinese</option>
           <option value="indian">Indian</option>
           <option value="mexican">Mexican</option>
@@ -44,7 +51,7 @@ var Form = React.createClass({
 var FormButton = React.createClass({
   render: function() {
     return (
-      <Link to={'/confirmationpage'}><button type="submit">{this.props.text}</button> </Link>
+      <button type="submit">{this.props.text}</button>
     )
   }
 });

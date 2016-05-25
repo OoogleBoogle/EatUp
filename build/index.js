@@ -48,8 +48,8 @@
 	
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(38);
-	var actions = __webpack_require__(168);
-	var actions = __webpack_require__(172);
+	var restaurantActions = __webpack_require__(168);
+	var userActions = __webpack_require__(172);
 	var Provider = __webpack_require__(173).Provider;
 	var store = __webpack_require__(195);
 	
@@ -71,7 +71,6 @@
 	  displayName: 'EatUp',
 	
 	  componentDidMount: function componentDidMount() {
-	    console.log('function called');
 	    var startPos;
 	    var geoOptions = {
 	      timeout: 10 * 1000
@@ -95,31 +94,22 @@
 	
 	    navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 	  },
-	  getRestaurant: function getRestaurant(event) {
-	    event.preventDefault();
+	  getRestaurant: function getRestaurant(data) {
+	    console.log('getting restaurant', this.state);
 	
-	    var firstName = this.refs.firstName.value;
-	    var lastName = this.refs.lastName.value;
-	    var email = this.refs.email.value;
 	    var latitude = parseInt(this.state.lat);
 	    var longitude = parseInt(this.state.long);
 	    var foodSelector = document.getElementById("foodType");
-	    var foodType = foodSelector.value;
+	    var foodType = data.foodType;
 	
 	    this.setState({
-	      firstName: firstName,
-	      lastName: lastName,
-	      email: email,
-	      foodType: foodType
+	      firstName: data.firstName,
+	      lastName: data.lastName,
+	      email: data.email,
+	      foodType: data.foodType
 	    });
 	
-	    console.log(event.target);
-	    console.log('getRestaurant', userLocation);
-	
-	    console.log('foodtype', foodType);
-	    console.log('lat', latitude);
-	    console.log('long', longitude);
-	    this.props.dispatch(actions.getRestaurant(longitude, latitude, foodType));
+	    store.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
 	  },
 	  render: function render() {
 	    //TODO: if the textboxes are all filled out, diabled = false
@@ -136,12 +126,13 @@
 	        null,
 	        'Find dining companions near you!'
 	      ),
-	      this.props.children
+	      React.createElement(Form, { getRestaurant: this.getRestaurant })
 	    );
 	  }
 	});
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
+	  console.log('hello');
 	  return {
 	    eatup: state
 	  };
@@ -158,7 +149,7 @@
 	    React.createElement(
 	      Route,
 	      { path: '/', component: EatUp },
-	      React.createElement(IndexRoute, { component: Form }),
+	      React.createElement(IndexRoute, { component: Container }),
 	      React.createElement(Route, { path: '/confirmationpage', component: ConfirmationPage }),
 	      React.createElement(Route, { path: '/confirmed', component: Confirmed })
 	    )
@@ -20453,6 +20444,7 @@
 	
 	// Api call to FourSquare API.
 	var getRestaurant = function getRestaurant(long, lat, foodType) {
+	  console.log('foursquare');
 	  var options = {
 	    base_url: 'https://api.foursquare.com/v2/venues/explore?', // using 'explore' endpoint over 'search', yealded better 'top' results.
 	    coords: 'll=' + long + ',' + lat,
@@ -20463,6 +20455,7 @@
 	    version: '&v=20150501' // required by FourSquare. Basically says use API version from 05/01/2015
 	    // to prevent breakages if param names change on future API updates
 	  };
+	  console.log(options.CLIENT_SECRET);
 	  // concating instead of looping due to race condition probs
 	  var url = options.base_url + options.coords + options.CLIENT_ID + options.CLIENT_SECRET + options.limit + options.query + '&v=20150501';
 	  return function (dispatch) {
@@ -22961,7 +22954,7 @@
 	
 	var React = __webpack_require__(1);
 	var connect = __webpack_require__(173).connect;
-	var actions = __webpack_require__(172);
+	var actions = __webpack_require__(168);
 	
 	var router = __webpack_require__(205);
 	var Link = __webpack_require__(205).Link;
@@ -22973,11 +22966,18 @@
 	
 	  preventRefresh: function preventRefresh(event) {
 	    event.preventDefault();
+	    console.log('form');
+	    this.props.getRestaurant({
+	      firstName: this.refs.firstName.value,
+	      lastName: this.refs.lastName.value,
+	      email: this.refs.email.value,
+	      foodType: this.refs.foodType.value
+	    });
 	  },
 	  render: function render() {
 	    return React.createElement(
 	      'form',
-	      { onSubmit: this.props.getRestaurants, 'class': 'restaurantSearch' },
+	      { onSubmit: this.preventRefresh, 'class': 'restaurantSearch' },
 	      React.createElement(
 	        'div',
 	        null,
@@ -22996,7 +22996,7 @@
 	      ),
 	      React.createElement(
 	        'select',
-	        { id: 'foodType' },
+	        { ref: 'foodType' },
 	        React.createElement(
 	          'option',
 	          { value: 'chinese' },
@@ -23063,14 +23063,9 @@
 	
 	  render: function render() {
 	    return React.createElement(
-	      Link,
-	      { to: '/confirmationpage' },
-	      React.createElement(
-	        'button',
-	        { type: 'submit' },
-	        this.props.text
-	      ),
-	      ' '
+	      'button',
+	      { type: 'submit' },
+	      this.props.text
 	    );
 	  }
 	});
