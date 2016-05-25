@@ -4,13 +4,22 @@ var schema = mongoose.Schema;
 var bodyParser = require('body-parser');
 var User = require('../model/user');
 
-mongoose.connection.on('error', function(err) {
-    console.error('COULD NOT CONNECT. Error:', err);
+mongoose.connect('mongodb://localhost/eatup-test');
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log('DB CONNECTION SUCCESSFUL');
 });
+// var connection = mongoose.createConnection('mongodb://localhost/eatup-test');
+//
+// mongoose.connection.on('error', function(err) {
+//     console.error('COULD NOT CONNECT. Error:', err);
+// });
 
 
 // MODELS
-
+// MODELS HAVE BEEN EXPORTED TO MODEL DIRECTORY
 // END MODELS
 
 
@@ -31,9 +40,21 @@ testUser.save(function(err) {
     }
 });
 
-var createUser = function() { //give variable names to connie for creating user and finding user
-    User.create(function() {
+var createUser = function(firstname, lastname, email, food, city, state) { //give variable names to connie for creating user and finding user
+    var user = new User({
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        food: food, //talk with connie about expanding food taste selection
+        location: {
+            city: city,
+            state: state
+        }
+    });
 
+    user.save(function(err) {
+        if (err) return handleError(err);
+        // saved!
     });
 };
 
@@ -69,28 +90,6 @@ findUser('Kaeside');
 
 //Locking People Out from meeting up with other people once they commit to a date for that day only
 
-
-// END OF ADDTL FEATURES
-
 //FIND USER BY FOOD AND location
 
-
-
-/*app.use(bodyParser.urlencoded({
-    extended: true
-}));
-app.use(bodyParser.json());
-
-
-app.get('/', function(req, res) {
-    res.json({
-        message: 'This is the main page!',
-    });
-});
-
-app.listen(8080, function() {
-    console.log('Listening on port 8080');
-});
-
-exports.app = app;
-*/
+// END OF ADDTL FEATURES
