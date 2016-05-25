@@ -2,9 +2,12 @@
   "name": "eatup",
   "version": "1.0.0",
   "description": "",
-  "main": "index.jsx",
+  "main": "./js/index.jsx",
   "scripts": {
+    "build": "npm run clean && npm run mkdir && npm run build:html && npm run build:jsx",
+    "watch": "npm run watch:html & npm run watch:css & npm run watch:jsx",
     "test": "mocha --compilers js:babel-register test/**/*.js*",
+    "serve": "http-server build",
     "start:server": "nodemon ./index.js",
     "mkdir": "mkdir -p build",
     "clean": "rm -rf build",
@@ -15,7 +18,10 @@
     "watch:js": "npm run build:js && webpack --watch",
     "clean:js": "rm -f build/$npm_package_name.$npm_package_version.js build/$npm_package_name.$npm_package_version.js.map",
     "clean:css": "rm build/css/main.css",
-    "watch:css": "sass sass:css --watch"
+    "watch:css": "sass sass:css --watch",
+    "build:jsx": "npm run clean:jsx && webpack",
+    "watch:jsx": "npm run build:jsx && webpack --watch",
+    "clean:jsx": "rm -f build/$npm_package_name.$npm_package_version.jsx build/$npm_package_name.$npm_package_version.jsx.map"
   },
   "author": "",
   "license": "ISC",
@@ -33,7 +39,9 @@
     "react-addons-test-utils": ">=15.0.2",
     "sass-loader": ">=3.2.0",
     "webpack": ">=1.13.0",
-    "webpack-dev-server": ">=1.14.1"
+    "webpack-dev-server": ">=1.14.1",
+    "http-server": "^0.9.0",
+    "chokidar-cli": "^1.2.0"
   },
   "dependencies": {
     "body-parser": ">=1.15.1",

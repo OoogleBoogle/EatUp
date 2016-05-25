@@ -1,3 +1,7 @@
 node_modules
+<<<<<<< HEAD
 redux/secrets.js
 .sass-cache
+=======
+secrets
+>>>>>>> 24a13c13b3597bd49e03ed3fce2887ea76d7d87b
