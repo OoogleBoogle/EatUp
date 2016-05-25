@@ -95,10 +95,9 @@
 	    navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 	  },
 	  getRestaurant: function getRestaurant(data) {
-	    console.log('getting restaurant', this.state);
 	
-	    var latitude = parseInt(this.state.lat);
-	    var longitude = parseInt(this.state.long);
+	    var latitude = this.state.lat;
+	    var longitude = this.state.long;
 	    var foodSelector = document.getElementById("foodType");
 	    var foodType = data.foodType;
 	
@@ -108,6 +107,8 @@
 	      email: data.email,
 	      foodType: data.foodType
 	    });
+	    console.log(latitude, longitude, foodType);
+	    console.log('getting restaurant', this.state);
 	
 	    store.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
 	  },
@@ -20443,7 +20444,7 @@
 	var ids = __webpack_require__(171); // seperate file for api ID's so not checked into github
 	
 	// Api call to FourSquare API.
-	var getRestaurant = function getRestaurant(long, lat, foodType) {
+	var getRestaurant = function getRestaurant(lat, long, foodType) {
 	  console.log('foursquare');
 	  var options = {
 	    base_url: 'https://api.foursquare.com/v2/venues/explore?', // using 'explore' endpoint over 'search', yealded better 'top' results.
@@ -20455,7 +20456,6 @@
 	    version: '&v=20150501' // required by FourSquare. Basically says use API version from 05/01/2015
 	    // to prevent breakages if param names change on future API updates
 	  };
-	  console.log(options.CLIENT_SECRET);
 	  // concating instead of looping due to race condition probs
 	  var url = options.base_url + options.coords + options.CLIENT_ID + options.CLIENT_SECRET + options.limit + options.query + '&v=20150501';
 	  return function (dispatch) {

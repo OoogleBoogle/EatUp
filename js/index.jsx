@@ -45,10 +45,9 @@ var EatUp = React.createClass({
     navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
   },
   getRestaurant: function(data) {
-    console.log('getting restaurant', this.state);
 
-    var latitude = parseInt(this.state.lat);
-    var longitude = parseInt(this.state.long);
+    var latitude = this.state.lat;
+    var longitude = this.state.long;
     var foodSelector = document.getElementById("foodType");
     var foodType = data.foodType;
 
@@ -58,6 +57,9 @@ var EatUp = React.createClass({
       email: data.email,
       foodType: data.foodType
     });
+    console.log(latitude, longitude, foodType);
+    console.log('getting restaurant', this.state);
+
 
     store.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
   },

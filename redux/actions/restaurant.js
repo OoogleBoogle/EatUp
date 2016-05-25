@@ -2,7 +2,7 @@ require('isomorphic-fetch');
 var ids = require('../secrets.js'); // seperate file for api ID's so not checked into github
 
 // Api call to FourSquare API.
-var getRestaurant = function(long, lat, foodType) {
+var getRestaurant = function(lat, long, foodType) {
   console.log('foursquare');
   var options = {
     base_url: 'https://api.foursquare.com/v2/venues/explore?', // using 'explore' endpoint over 'search', yealded better 'top' results.
@@ -14,7 +14,6 @@ var getRestaurant = function(long, lat, foodType) {
     version: '&v=20150501' // required by FourSquare. Basically says use API version from 05/01/2015
                            // to prevent breakages if param names change on future API updates
   }
-  console.log(options.CLIENT_SECRET);
   // concating instead of looping due to race condition probs
   var url = options.base_url + options.coords + options.CLIENT_ID + options.CLIENT_SECRET + options.limit + options.query + '&v=20150501';
   return function(dispatch) {
