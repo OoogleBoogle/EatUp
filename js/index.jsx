@@ -11,6 +11,11 @@ var Confirmed = require('./confirmed.jsx');
 
 var connect = require('react-redux').connect;
 
+var router = require('react-router');
+var Router = router.Router;
+var Route = router.Route;
+var hashHistory = router.hashHistory;
+
 var EatUp = React.createClass({
   componentDidMount: function() {
     console.log('function called');
@@ -83,11 +88,18 @@ var mapStateToProps = function(state, props) {
 
 var Container = connect(mapStateToProps)(EatUp);
 
+var routes = (
+  <Router history={hashHistory}>
+    <Route path="/form" component={EatUp} />
+    <Route path="/ConfirmationPage" component={ConfirmationPage} />
+    <Route path="/Confirmed" component={Confirmed} />
+  </Router>
+);
 
 document.addEventListener('DOMContentLoaded', function(){
     ReactDOM.render(
       <Provider store={store}>
-        <ConfirmationPage />
+        <EatUp />
       </Provider>, document.getElementById('app')
     );
 });
