@@ -15,6 +15,7 @@ exports.userReducer = function(state, action) {
     state = newState;
   }
   else if (action.type === actions.USER_NOT_SAVED) {
+    console.log('==========USER_NOT_SAVED==========');
     var newState = update(state, {
       $set: {
         confirmed: false

@@ -1,10 +1,10 @@
 var fetch = require('isomorphic-fetch');
 
 var SAVE_USER = 'SAVE_USER';
-// making POST request to backend with user details 
+// making POST request to backend with user details
 var saveUser = function(user) {
   return function(dispatch) {
-    return fetch('ENDPOINT', {
+    return fetch('/saveuser', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -13,8 +13,11 @@ var saveUser = function(user) {
       body: JSON.stringify({
         firstName: user.firstName,
         lastName: user.lastName,
-        email: user.lastName,
-        foodType: user.foodType
+        email: user.email,
+        foodType: user.foodType,
+        city: user.city,
+        state: user.state,
+        restaurantName: user.restaurantName
       })
     })
     .then(function(response) {
