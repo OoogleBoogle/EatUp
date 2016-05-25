@@ -3,8 +3,15 @@ var mongoose = require('mongoose');
 var schema = mongoose.Schema;
 var bodyParser = require('body-parser');
 var User = require('../model/user');
-
+var express = require('express');
+var app = express();
 mongoose.connect('mongodb://localhost/eatup-test');
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'CONNECTION ERROR MESSAGE:'));
@@ -39,13 +46,13 @@ testUser.save(function(err) {
         return 'USER DID NOT SAVE!';
     }
 });
-
-var createUser = function(firstname, lastname, email, food, city, state) { //give variable names to connie for creating user and finding user
+app.post('/saveuser', bodyParser, )
+var createUser = function(firstname, lastname, email, foodType, city, state) { //give variable names to connie for creating user and finding user
     var user = new User({
         firstname: firstname,
         lastname: lastname,
         email: email,
-        food: food, //talk with connie about expanding food taste selection
+        foodType: foodType, //talk with connie about expanding food taste selection
         location: {
             city: city,
             state: state

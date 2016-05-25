@@ -8,23 +8,23 @@ process.env.NODE_ENV = 'test';
 beforeEach(function (done) {
 
 
-  function clearDB() {
-    for (var i in mongoose.connection.collections) {
-      mongoose.connection.collections[i].remove(function() {});
+  function emptyDatabase() {
+    for (var i in db.collections) {
+      db.collections[i].remove(function() {});
     }
     return done();
   }
 
 
-  if (mongoose.connection.readyState === 0) {
+  if (db.readyState === 0) {
     mongoose.connect(config.db.test, function (err) {
       if (err) {
         throw err;
       }
-      return clearDB();
+      return emptydatabase();
     });
   } else {
-    return clearDB();
+    return emptydatabase();
   }
 });
 
