@@ -63,6 +63,9 @@
 	var Router = router.Router;
 	var Route = router.Route;
 	var hashHistory = router.hashHistory;
+	var IndexRoute = router.IndexRoute;
+	var Link = router.link;
+	var Link = __webpack_require__(205).Link;
 	
 	var EatUp = React.createClass({
 	  displayName: 'EatUp',
@@ -133,7 +136,7 @@
 	        null,
 	        'Find dining companions near you!'
 	      ),
-	      React.createElement(Form, { getRestaurants: this.getRestaurant })
+	      this.props.children
 	    );
 	  }
 	});
@@ -147,19 +150,23 @@
 	var Container = connect(mapStateToProps)(EatUp);
 	
 	var routes = React.createElement(
-	  Router,
-	  { history: hashHistory },
-	  React.createElement(Route, { path: '/form', component: EatUp }),
-	  React.createElement(Route, { path: '/ConfirmationPage', component: ConfirmationPage }),
-	  React.createElement(Route, { path: '/Confirmed', component: Confirmed })
+	  Provider,
+	  { store: store },
+	  React.createElement(
+	    Router,
+	    { history: hashHistory },
+	    React.createElement(
+	      Route,
+	      { path: '/', component: EatUp },
+	      React.createElement(IndexRoute, { component: Form }),
+	      React.createElement(Route, { path: '/confirmationpage', component: ConfirmationPage }),
+	      React.createElement(Route, { path: '/confirmed', component: Confirmed })
+	    )
+	  )
 	);
 	
 	document.addEventListener('DOMContentLoaded', function () {
-	  ReactDOM.render(React.createElement(
-	    Provider,
-	    { store: store },
-	    React.createElement(EatUp, null)
-	  ), document.getElementById('app'));
+	  ReactDOM.render(routes, document.getElementById('app'));
 	});
 
 /***/ },
@@ -22956,6 +22963,11 @@
 	var connect = __webpack_require__(173).connect;
 	var actions = __webpack_require__(172);
 	
+	var router = __webpack_require__(205);
+	var Link = __webpack_require__(205).Link;
+	var Router = router.Router;
+	var Route = router.Route;
+	
 	var Form = React.createClass({
 	  displayName: 'Form',
 	
@@ -23050,11 +23062,15 @@
 	  displayName: 'FormButton',
 	
 	  render: function render() {
-	    var disabled = true;
 	    return React.createElement(
-	      'button',
-	      { type: 'submit' },
-	      this.props.text
+	      Link,
+	      { to: '/confirmationpage' },
+	      React.createElement(
+	        'button',
+	        { type: 'submit' },
+	        this.props.text
+	      ),
+	      ' '
 	    );
 	  }
 	});

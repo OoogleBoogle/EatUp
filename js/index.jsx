@@ -15,6 +15,9 @@ var router = require('react-router');
 var Router = router.Router;
 var Route = router.Route;
 var hashHistory = router.hashHistory;
+var IndexRoute = router.IndexRoute;
+var Link = router.link;
+var Link = require('react-router').Link
 
 var EatUp = React.createClass({
   componentDidMount: function() {
@@ -74,7 +77,7 @@ var EatUp = React.createClass({
       <header>
         <h1>EatUp</h1>
         <p>Find dining companions near you!</p>
-        <Form getRestaurants={this.getRestaurant} />
+        {this.props.children}
       </header>
     )
   }
@@ -89,17 +92,19 @@ var mapStateToProps = function(state, props) {
 var Container = connect(mapStateToProps)(EatUp);
 
 var routes = (
-  <Router history={hashHistory}>
-    <Route path="/form" component={EatUp} />
-    <Route path="/ConfirmationPage" component={ConfirmationPage} />
-    <Route path="/Confirmed" component={Confirmed} />
-  </Router>
+  <Provider store={store}>
+    <Router history={hashHistory}>
+      <Route path="/" component={EatUp}>
+        <IndexRoute component={Form} />
+        <Route path="/confirmationpage" component={ConfirmationPage} />
+        <Route path="/confirmed" component={Confirmed} />
+      </Route>
+    </Router>
+  </Provider>
 );
 
 document.addEventListener('DOMContentLoaded', function(){
     ReactDOM.render(
-      <Provider store={store}>
-        <EatUp />
-      </Provider>, document.getElementById('app')
+        routes, document.getElementById('app')
     );
 });
