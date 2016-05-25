@@ -1,6 +1,11 @@
 var React = require('react');
 var connect = require('react-redux').connect;
-var actions = require('../redux/actions');
+var actions = require('../redux/actions/user.js');
+
+var router = require('react-router');
+var Link = require('react-router').Link;
+var Router = router.Router;
+var Route = router.Route;
 
 var Form = React.createClass({
   preventRefresh: function(event) {
@@ -38,12 +43,17 @@ var Form = React.createClass({
 
 var FormButton = React.createClass({
   render: function() {
-    var disabled = true;
     return (
-      <button type="submit">{this.props.text}</button>
+      <Link to={'/confirmationpage'}><button type="submit">{this.props.text}</button> </Link>
     )
   }
 });
+
+var mapStateToProps = function(state, props) {
+  return {
+    eatup: state
+  };
+};
 
 var Container = connect(mapStateToProps)(Form);
 
