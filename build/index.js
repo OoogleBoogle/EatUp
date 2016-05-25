@@ -49,6 +49,9 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(38);
 	var userLocation = {};
+	var Confirmation = __webpack_require__(168);
+	var Form = __webpack_require__(169);
+	var Confirmed = __webpack_require__(170);
 	
 	var EatUp = React.createClass({
 	  displayName: 'EatUp',
@@ -66,7 +69,6 @@
 	        lat: position.coords.latitude,
 	        long: position.coords.longitude
 	      });
-	      // this.props.dispatch(actions.saveLocation(userLocation));
 	    };
 	    var geoError = function geoError(error) {
 	      console.log('Error occurred. Error code: ' + error.code);
@@ -92,6 +94,14 @@
 	    console.log('long', longitude);
 	    this.props.dispatch(actions.getRestaurant(latitude, longitude, foodType));
 	  },
+	  saveUser: function saveUser(event) {
+	    event.preventDefault();
+	    var firstName;
+	    var lastName;
+	    var email;
+	    var foodType;
+	    this.props.dispatch(actions.saveUser(firstName, lastName, email, foodType));
+	  },
 	  render: function render() {
 	    //TODO: if the textboxes are all filled out, diabled = false
 	    return React.createElement(
@@ -111,159 +121,6 @@
 	    );
 	  }
 	});
-	
-	var Form = React.createClass({
-	  displayName: 'Form',
-	
-	  preventRefresh: function preventRefresh(event) {
-	    event.preventDefault();
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'form',
-	      { onSubmit: this.props.getRestaurants, 'class': 'restaurantSearch' },
-	      React.createElement(
-	        'div',
-	        null,
-	        React.createElement('input', { type: 'text', ref: 'firstName', placeholder: 'First name' }),
-	        React.createElement('input', { type: 'text', ref: 'lastName', placeholder: 'Last name' })
-	      ),
-	      React.createElement(
-	        'div',
-	        null,
-	        React.createElement('input', { type: 'text', ref: 'email', placeholder: 'Enter your email...' })
-	      ),
-	      React.createElement(
-	        'div',
-	        null,
-	        'What do you want to eat today?'
-	      ),
-	      React.createElement(
-	        'select',
-	        { id: 'foodType' },
-	        React.createElement(
-	          'option',
-	          { value: 'chinese' },
-	          'Chinese'
-	        ),
-	        React.createElement(
-	          'option',
-	          { value: 'indian' },
-	          'Indian'
-	        ),
-	        React.createElement(
-	          'option',
-	          { value: 'mexican' },
-	          'Mexican'
-	        ),
-	        React.createElement(
-	          'option',
-	          { value: 'thai' },
-	          'Thai'
-	        ),
-	        React.createElement(
-	          'option',
-	          { value: 'japanese' },
-	          'Japanese'
-	        ),
-	        React.createElement(
-	          'option',
-	          { value: 'vietnamese' },
-	          'Vietnamese'
-	        ),
-	        React.createElement(
-	          'option',
-	          { value: 'ethiopian' },
-	          'Ethiopian'
-	        ),
-	        React.createElement(
-	          'option',
-	          { value: 'french' },
-	          'French'
-	        ),
-	        React.createElement(
-	          'option',
-	          { value: 'korean' },
-	          'Korean'
-	        ),
-	        React.createElement(
-	          'option',
-	          { value: 'russian' },
-	          'Russian'
-	        ),
-	        React.createElement(
-	          'option',
-	          { value: 'mediterranean' },
-	          'Mediterranean'
-	        )
-	      ),
-	      React.createElement(FormButton, { text: 'Let\'s eat up!' })
-	    );
-	  }
-	});
-	
-	var FormButton = React.createClass({
-	  displayName: 'FormButton',
-	
-	  render: function render() {
-	    var disabled = true;
-	    return React.createElement(
-	      'button',
-	      { type: 'submit' },
-	      this.props.text
-	    );
-	  }
-	});
-	
-	var ConfirmButton = React.createClass({
-	  displayName: 'ConfirmButton',
-	
-	  render: function render() {
-	    return React.createElement(
-	      'button',
-	      { type: 'submit', onClick: this.props.confirmFunction },
-	      this.props.text
-	    );
-	  }
-	});
-	
-	var ConfirmationPage = React.createClass({
-	  displayName: 'ConfirmationPage',
-	
-	  render: function render() {
-	    return React.createElement(
-	      'section',
-	      null,
-	      React.createElement(
-	        'h3',
-	        null,
-	        'Confirmation Page'
-	      ),
-	      React.createElement(
-	        'div',
-	        null,
-	        'Almost there! What do you think of this restaurant? Please hit confirm if you\'d like to eat there!"'
-	      ),
-	      React.createElement(
-	        'div',
-	        null,
-	        React.createElement(ConfirmButton, { text: 'I\'d eat that' })
-	      )
-	    );
-	  }
-	});
-	
-	var ConfirmedPage = function ConfirmedPage() {
-	  return React.createElement(
-	    'div',
-	    { 'class': 'confirmation' },
-	    React.createElement(
-	      'p',
-	      null,
-	      'You\'ve been confirmed! As soon as we find a match, we\'ll let you know!'
-	    )
-	  );
-	};
 	
 	document.addEventListener('DOMContentLoaded', function () {
 	  ReactDOM.render(React.createElement(EatUp, null), document.getElementById('app'));
@@ -20541,6 +20398,192 @@
 	var ReactMount = __webpack_require__(160);
 	
 	module.exports = ReactMount.renderSubtreeIntoContainer;
+
+/***/ },
+/* 168 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	
+	var ConfirmationPage = React.createClass({
+	  displayName: "ConfirmationPage",
+	
+	  render: function render() {
+	    return React.createElement(
+	      "section",
+	      null,
+	      React.createElement(
+	        "h3",
+	        null,
+	        "Confirmation Page"
+	      ),
+	      React.createElement(
+	        "div",
+	        null,
+	        "Almost there! What do you think of this restaurant? Please hit confirm if you'd like to eat there!\""
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "restaurantResult" },
+	        "// information received from foursquare endpoint"
+	      ),
+	      React.createElement(
+	        "div",
+	        null,
+	        React.createElement(ConfirmButton, { confirmFunction: this.saveUser, text: "I'd eat that" })
+	      )
+	    );
+	  }
+	});
+	
+	var ConfirmButton = React.createClass({
+	  displayName: "ConfirmButton",
+	
+	  render: function render() {
+	    return React.createElement(
+	      "button",
+	      { type: "submit", onClick: this.props.confirmFunction },
+	      this.props.text
+	    );
+	  }
+	});
+	
+	module.exports = Container;
+
+/***/ },
+/* 169 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	
+	var Form = React.createClass({
+	  displayName: "Form",
+	
+	  preventRefresh: function preventRefresh(event) {
+	    event.preventDefault();
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      "form",
+	      { onSubmit: this.props.getRestaurants, "class": "restaurantSearch" },
+	      React.createElement(
+	        "div",
+	        null,
+	        React.createElement("input", { type: "text", ref: "firstName", placeholder: "First name" }),
+	        React.createElement("input", { type: "text", ref: "lastName", placeholder: "Last name" })
+	      ),
+	      React.createElement(
+	        "div",
+	        null,
+	        React.createElement("input", { type: "text", ref: "email", placeholder: "Enter your email..." })
+	      ),
+	      React.createElement(
+	        "div",
+	        null,
+	        "What do you want to eat today?"
+	      ),
+	      React.createElement(
+	        "select",
+	        { id: "foodType" },
+	        React.createElement(
+	          "option",
+	          { value: "chinese" },
+	          "Chinese"
+	        ),
+	        React.createElement(
+	          "option",
+	          { value: "indian" },
+	          "Indian"
+	        ),
+	        React.createElement(
+	          "option",
+	          { value: "mexican" },
+	          "Mexican"
+	        ),
+	        React.createElement(
+	          "option",
+	          { value: "thai" },
+	          "Thai"
+	        ),
+	        React.createElement(
+	          "option",
+	          { value: "japanese" },
+	          "Japanese"
+	        ),
+	        React.createElement(
+	          "option",
+	          { value: "vietnamese" },
+	          "Vietnamese"
+	        ),
+	        React.createElement(
+	          "option",
+	          { value: "ethiopian" },
+	          "Ethiopian"
+	        ),
+	        React.createElement(
+	          "option",
+	          { value: "french" },
+	          "French"
+	        ),
+	        React.createElement(
+	          "option",
+	          { value: "korean" },
+	          "Korean"
+	        ),
+	        React.createElement(
+	          "option",
+	          { value: "russian" },
+	          "Russian"
+	        ),
+	        React.createElement(
+	          "option",
+	          { value: "mediterranean" },
+	          "Mediterranean"
+	        )
+	      ),
+	      React.createElement(FormButton, { text: "Let's eat up!" })
+	    );
+	  }
+	});
+	
+	var FormButton = React.createClass({
+	  displayName: "FormButton",
+	
+	  render: function render() {
+	    var disabled = true;
+	    return React.createElement(
+	      "button",
+	      { type: "submit" },
+	      this.props.text
+	    );
+	  }
+	});
+
+/***/ },
+/* 170 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	
+	var ConfirmedPage = function ConfirmedPage() {
+	  return React.createElement(
+	    "div",
+	    { "class": "confirmation" },
+	    React.createElement(
+	      "p",
+	      null,
+	      "You've been confirmed! As soon as we find a match, we'll let you know!"
+	    )
+	  );
+	};
+	
+	module.exports = Container;
 
 /***/ }
 /******/ ]);

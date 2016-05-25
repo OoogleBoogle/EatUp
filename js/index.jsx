@@ -1,9 +1,9 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var userLocation = {};
-var Confirmation = require(./confirmation.jsx);
-var Form = require(./form.jsx);
-var Confirmation = require(./confirmation);
+var Confirmation = require('./confirmation.jsx');
+var Form = require('./form.jsx');
+var Confirmed = require('./confirmed.jsx');
 
 var EatUp = React.createClass({
   componentDidMount: function() {
@@ -19,7 +19,6 @@ var EatUp = React.createClass({
         lat: position.coords.latitude,
         long: position.coords.longitude
       });
-      // this.props.dispatch(actions.saveLocation(userLocation));
     };
     var geoError = function(error) {
       console.log('Error occurred. Error code: ' + error.code);
@@ -45,13 +44,14 @@ var EatUp = React.createClass({
     console.log('long', longitude);
     this.props.dispatch(actions.getRestaurant(latitude, longitude, foodType));
   },
-  addUser: function(event) {
+  saveUser: function(event) {
     event.preventDefault();
-    var firstName =
-    var lastName =
-    var emailAddress =
-    var foodType =
-  }
+    var firstName;
+    var lastName;
+    var email;
+    var foodType;
+    this.props.dispatch(actions.saveUser(firstName, lastName, email, foodType))
+  },
   render: function() {
     //TODO: if the textboxes are all filled out, diabled = false
     return (
