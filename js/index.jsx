@@ -1,8 +1,8 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var actions = require('./redux/actions');
+var actions = require('../redux/actions');
 var Provider = require('react-redux').Provider;
-var store = require('.redux/store.js');
+var store = require('../redux/store.js');
 
 var Confirmation = require('./confirmation.jsx');
 var Form = require('./form.jsx');

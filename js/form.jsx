@@ -1,6 +1,6 @@
 var React = require('react');
 var connect = require('react-redux').connect;
-var actions = require('./redux/actions');
+var actions = require('../redux/actions');
 
 var Form = React.createClass({
   preventRefresh: function(event) {
