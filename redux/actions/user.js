@@ -13,7 +13,7 @@ var saveUser = function(user) {
       body: JSON.stringify({
         firstName: user.firstName,
         lastName: user.lastName,
-        email: user.lastName,
+        email: user.email,
         foodType: user.foodType,
         city: user.city,
         state: user.state,
