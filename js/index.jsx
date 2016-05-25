@@ -71,7 +71,7 @@ var EatUp = React.createClass({
 
 var mapStateToProps = function(state, props) {
   return {
-    repositories: state
+    eatup: state
   };
 };
 
