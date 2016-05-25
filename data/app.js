@@ -7,7 +7,7 @@ var User = require('../model/user');
 mongoose.connect('mongodb://localhost/eatup-test');
 
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+db.on('error', console.error.bind(console, 'CONNECTION ERROR MESSAGE:'));
 db.once('open', function() {
   console.log('DB CONNECTION SUCCESSFUL');
 });
