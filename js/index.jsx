@@ -1,10 +1,11 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var actions = require('../redux/actions');
+var actions = require('../redux/actions/restaurant.js');
+var actions = require('../redux/actions/user.js');
 var Provider = require('react-redux').Provider;
 var store = require('../redux/store.js');
 
-var Confirmation = require('./confirmation.jsx');
+var ConfirmationPage = require('./confirmation.jsx');
 var Form = require('./form.jsx');
 var Confirmed = require('./confirmed.jsx');
 
@@ -38,24 +39,29 @@ var EatUp = React.createClass({
   },
   getRestaurant: function(event) {
     event.preventDefault();
-    console.log(event.target);
-    console.log('getRestaurant', userLocation);
+
+    var firstName = this.refs.firstName.value;
+    var lastName = this.refs.lastName.value;
+    var email = this.refs.email.value;
     var latitude = parseInt(this.state.lat);
     var longitude = parseInt(this.state.long);
     var foodSelector = document.getElementById("foodType");
     var foodType = foodSelector.value;
+
+    this.setState({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      foodType: foodType
+    });
+
+    console.log(event.target);
+    console.log('getRestaurant', userLocation);
+
     console.log('foodtype', foodType);
     console.log('lat', latitude);
     console.log('long', longitude);
     this.props.dispatch(actions.getRestaurant(longitude, latitude, foodType));
-  },
-  saveUser: function(event) {
-    event.preventDefault();
-    var firstName;
-    var lastName;
-    var email;
-    var foodType;
-    this.props.dispatch(actions.saveUser(firstName, lastName, email, foodType))
   },
   render: function() {
     //TODO: if the textboxes are all filled out, diabled = false
@@ -81,7 +87,7 @@ var Container = connect(mapStateToProps)(EatUp);
 document.addEventListener('DOMContentLoaded', function(){
     ReactDOM.render(
       <Provider store={store}>
-        <EatUp />
+        <ConfirmationPage />
       </Provider>, document.getElementById('app')
     );
 });

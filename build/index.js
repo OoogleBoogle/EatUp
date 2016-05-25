@@ -48,15 +48,16 @@
 	
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(38);
-	var actions = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../redux/actions\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-	var Provider = __webpack_require__(168).Provider;
-	var store = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../redux/store.js\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var actions = __webpack_require__(168);
+	var actions = __webpack_require__(172);
+	var Provider = __webpack_require__(173).Provider;
+	var store = __webpack_require__(195);
 	
-	var Confirmation = __webpack_require__(190);
-	var Form = __webpack_require__(191);
-	var Confirmed = __webpack_require__(192);
+	var ConfirmationPage = __webpack_require__(202);
+	var Form = __webpack_require__(203);
+	var Confirmed = __webpack_require__(204);
 	
-	var connect = __webpack_require__(168).connect;
+	var connect = __webpack_require__(173).connect;
 	
 	var EatUp = React.createClass({
 	  displayName: 'EatUp',
@@ -88,24 +89,29 @@
 	  },
 	  getRestaurant: function getRestaurant(event) {
 	    event.preventDefault();
-	    console.log(event.target);
-	    console.log('getRestaurant', userLocation);
+	
+	    var firstName = this.refs.firstName.value;
+	    var lastName = this.refs.lastName.value;
+	    var email = this.refs.email.value;
 	    var latitude = parseInt(this.state.lat);
 	    var longitude = parseInt(this.state.long);
 	    var foodSelector = document.getElementById("foodType");
 	    var foodType = foodSelector.value;
+	
+	    this.setState({
+	      firstName: firstName,
+	      lastName: lastName,
+	      email: email,
+	      foodType: foodType
+	    });
+	
+	    console.log(event.target);
+	    console.log('getRestaurant', userLocation);
+	
 	    console.log('foodtype', foodType);
 	    console.log('lat', latitude);
 	    console.log('long', longitude);
 	    this.props.dispatch(actions.getRestaurant(longitude, latitude, foodType));
-	  },
-	  saveUser: function saveUser(event) {
-	    event.preventDefault();
-	    var firstName;
-	    var lastName;
-	    var email;
-	    var foodType;
-	    this.props.dispatch(actions.saveUser(firstName, lastName, email, foodType));
 	  },
 	  render: function render() {
 	    //TODO: if the textboxes are all filled out, diabled = false
@@ -139,7 +145,7 @@
 	  ReactDOM.render(React.createElement(
 	    Provider,
 	    { store: store },
-	    React.createElement(EatUp, null)
+	    React.createElement(ConfirmationPage, null)
 	  ), document.getElementById('app'));
 	});
 
@@ -20422,14 +20428,600 @@
 
 	'use strict';
 	
+	__webpack_require__(169);
+	var ids = __webpack_require__(171); // seperate file for api ID's so not checked into github
+	
+	// Api call to FourSquare API.
+	var getRestaurant = function getRestaurant(long, lat, foodType) {
+	  var options = {
+	    base_url: 'https://api.foursquare.com/v2/venues/explore?', // using 'explore' endpoint over 'search', yealded better 'top' results.
+	    coords: 'll=' + long + ',' + lat,
+	    CLIENT_ID: '&client_id=' + ids.CLIENT_ID,
+	    CLIENT_SECRET: '&client_secret=' + ids.CLIENT_SECRET,
+	    limit: '&limit=1', // only get top result
+	    query: '&query=' + foodType,
+	    version: '&v=20150501' // required by FourSquare. Basically says use API version from 05/01/2015
+	    // to prevent breakages if param names change on future API updates
+	  };
+	  // concating instead of looping due to race condition probs
+	  var url = options.base_url + options.coords + options.CLIENT_ID + options.CLIENT_SECRET + options.limit + options.query + '&v=20150501';
+	  return function (dispatch) {
+	    return fetch(url).then(function (result) {
+	      if (result.status < 200 || result.status >= 300) {
+	        var err = new Error(result.statusText);
+	        err.response = result;
+	        throw err;
+	      }
+	      return result;
+	    }).then(function (data) {
+	      return data.json();
+	    }).then(function (data) {
+	      return dispatch(getRestaurantSuccess(data.response));
+	    }).catch(function (err) {
+	      return dispatch(getRestaurantError(err));
+	    });
+	  };
+	};
+	
+	var GET_RESTAURANT_SUCCESS = 'GET_RESTAURANT_SUCCESS';
+	var getRestaurantSuccess = function getRestaurantSuccess(data) {
+	  return {
+	    type: GET_RESTAURANT_SUCCESS,
+	    data: data
+	  };
+	};
+	
+	var GET_RESTAURANT_ERROR = 'GET_RESTAURANT_ERROR';
+	var getRestaurantError = function getRestaurantError(err) {
+	  return {
+	    type: GET_RESTAURANT_ERROR,
+	    err: err
+	  };
+	};
+	
+	exports.GET_RESTAURANT_SUCCESS = GET_RESTAURANT_SUCCESS;
+	exports.getRestaurantSuccess = getRestaurantSuccess;
+	exports.GET_RESTAURANT_ERROR = GET_RESTAURANT_ERROR;
+	exports.getRestaurantError = getRestaurantError;
+	exports.getRestaurant = getRestaurant;
+
+/***/ },
+/* 169 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// the whatwg-fetch polyfill installs the fetch() function
+	// on the global object (window or self)
+	//
+	// Return that as the export for use in Webpack, Browserify etc.
+	__webpack_require__(170);
+	module.exports = self.fetch.bind(self);
+
+
+/***/ },
+/* 170 */
+/***/ function(module, exports) {
+
+	(function(self) {
+	  'use strict';
+	
+	  if (self.fetch) {
+	    return
+	  }
+	
+	  var support = {
+	    searchParams: 'URLSearchParams' in self,
+	    iterable: 'Symbol' in self && 'iterator' in Symbol,
+	    blob: 'FileReader' in self && 'Blob' in self && (function() {
+	      try {
+	        new Blob()
+	        return true
+	      } catch(e) {
+	        return false
+	      }
+	    })(),
+	    formData: 'FormData' in self,
+	    arrayBuffer: 'ArrayBuffer' in self
+	  }
+	
+	  function normalizeName(name) {
+	    if (typeof name !== 'string') {
+	      name = String(name)
+	    }
+	    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+	      throw new TypeError('Invalid character in header field name')
+	    }
+	    return name.toLowerCase()
+	  }
+	
+	  function normalizeValue(value) {
+	    if (typeof value !== 'string') {
+	      value = String(value)
+	    }
+	    return value
+	  }
+	
+	  // Build a destructive iterator for the value list
+	  function iteratorFor(items) {
+	    var iterator = {
+	      next: function() {
+	        var value = items.shift()
+	        return {done: value === undefined, value: value}
+	      }
+	    }
+	
+	    if (support.iterable) {
+	      iterator[Symbol.iterator] = function() {
+	        return iterator
+	      }
+	    }
+	
+	    return iterator
+	  }
+	
+	  function Headers(headers) {
+	    this.map = {}
+	
+	    if (headers instanceof Headers) {
+	      headers.forEach(function(value, name) {
+	        this.append(name, value)
+	      }, this)
+	
+	    } else if (headers) {
+	      Object.getOwnPropertyNames(headers).forEach(function(name) {
+	        this.append(name, headers[name])
+	      }, this)
+	    }
+	  }
+	
+	  Headers.prototype.append = function(name, value) {
+	    name = normalizeName(name)
+	    value = normalizeValue(value)
+	    var list = this.map[name]
+	    if (!list) {
+	      list = []
+	      this.map[name] = list
+	    }
+	    list.push(value)
+	  }
+	
+	  Headers.prototype['delete'] = function(name) {
+	    delete this.map[normalizeName(name)]
+	  }
+	
+	  Headers.prototype.get = function(name) {
+	    var values = this.map[normalizeName(name)]
+	    return values ? values[0] : null
+	  }
+	
+	  Headers.prototype.getAll = function(name) {
+	    return this.map[normalizeName(name)] || []
+	  }
+	
+	  Headers.prototype.has = function(name) {
+	    return this.map.hasOwnProperty(normalizeName(name))
+	  }
+	
+	  Headers.prototype.set = function(name, value) {
+	    this.map[normalizeName(name)] = [normalizeValue(value)]
+	  }
+	
+	  Headers.prototype.forEach = function(callback, thisArg) {
+	    Object.getOwnPropertyNames(this.map).forEach(function(name) {
+	      this.map[name].forEach(function(value) {
+	        callback.call(thisArg, value, name, this)
+	      }, this)
+	    }, this)
+	  }
+	
+	  Headers.prototype.keys = function() {
+	    var items = []
+	    this.forEach(function(value, name) { items.push(name) })
+	    return iteratorFor(items)
+	  }
+	
+	  Headers.prototype.values = function() {
+	    var items = []
+	    this.forEach(function(value) { items.push(value) })
+	    return iteratorFor(items)
+	  }
+	
+	  Headers.prototype.entries = function() {
+	    var items = []
+	    this.forEach(function(value, name) { items.push([name, value]) })
+	    return iteratorFor(items)
+	  }
+	
+	  if (support.iterable) {
+	    Headers.prototype[Symbol.iterator] = Headers.prototype.entries
+	  }
+	
+	  function consumed(body) {
+	    if (body.bodyUsed) {
+	      return Promise.reject(new TypeError('Already read'))
+	    }
+	    body.bodyUsed = true
+	  }
+	
+	  function fileReaderReady(reader) {
+	    return new Promise(function(resolve, reject) {
+	      reader.onload = function() {
+	        resolve(reader.result)
+	      }
+	      reader.onerror = function() {
+	        reject(reader.error)
+	      }
+	    })
+	  }
+	
+	  function readBlobAsArrayBuffer(blob) {
+	    var reader = new FileReader()
+	    reader.readAsArrayBuffer(blob)
+	    return fileReaderReady(reader)
+	  }
+	
+	  function readBlobAsText(blob) {
+	    var reader = new FileReader()
+	    reader.readAsText(blob)
+	    return fileReaderReady(reader)
+	  }
+	
+	  function Body() {
+	    this.bodyUsed = false
+	
+	    this._initBody = function(body) {
+	      this._bodyInit = body
+	      if (typeof body === 'string') {
+	        this._bodyText = body
+	      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+	        this._bodyBlob = body
+	      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+	        this._bodyFormData = body
+	      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+	        this._bodyText = body.toString()
+	      } else if (!body) {
+	        this._bodyText = ''
+	      } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
+	        // Only support ArrayBuffers for POST method.
+	        // Receiving ArrayBuffers happens via Blobs, instead.
+	      } else {
+	        throw new Error('unsupported BodyInit type')
+	      }
+	
+	      if (!this.headers.get('content-type')) {
+	        if (typeof body === 'string') {
+	          this.headers.set('content-type', 'text/plain;charset=UTF-8')
+	        } else if (this._bodyBlob && this._bodyBlob.type) {
+	          this.headers.set('content-type', this._bodyBlob.type)
+	        } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+	          this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
+	        }
+	      }
+	    }
+	
+	    if (support.blob) {
+	      this.blob = function() {
+	        var rejected = consumed(this)
+	        if (rejected) {
+	          return rejected
+	        }
+	
+	        if (this._bodyBlob) {
+	          return Promise.resolve(this._bodyBlob)
+	        } else if (this._bodyFormData) {
+	          throw new Error('could not read FormData body as blob')
+	        } else {
+	          return Promise.resolve(new Blob([this._bodyText]))
+	        }
+	      }
+	
+	      this.arrayBuffer = function() {
+	        return this.blob().then(readBlobAsArrayBuffer)
+	      }
+	
+	      this.text = function() {
+	        var rejected = consumed(this)
+	        if (rejected) {
+	          return rejected
+	        }
+	
+	        if (this._bodyBlob) {
+	          return readBlobAsText(this._bodyBlob)
+	        } else if (this._bodyFormData) {
+	          throw new Error('could not read FormData body as text')
+	        } else {
+	          return Promise.resolve(this._bodyText)
+	        }
+	      }
+	    } else {
+	      this.text = function() {
+	        var rejected = consumed(this)
+	        return rejected ? rejected : Promise.resolve(this._bodyText)
+	      }
+	    }
+	
+	    if (support.formData) {
+	      this.formData = function() {
+	        return this.text().then(decode)
+	      }
+	    }
+	
+	    this.json = function() {
+	      return this.text().then(JSON.parse)
+	    }
+	
+	    return this
+	  }
+	
+	  // HTTP methods whose capitalization should be normalized
+	  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+	
+	  function normalizeMethod(method) {
+	    var upcased = method.toUpperCase()
+	    return (methods.indexOf(upcased) > -1) ? upcased : method
+	  }
+	
+	  function Request(input, options) {
+	    options = options || {}
+	    var body = options.body
+	    if (Request.prototype.isPrototypeOf(input)) {
+	      if (input.bodyUsed) {
+	        throw new TypeError('Already read')
+	      }
+	      this.url = input.url
+	      this.credentials = input.credentials
+	      if (!options.headers) {
+	        this.headers = new Headers(input.headers)
+	      }
+	      this.method = input.method
+	      this.mode = input.mode
+	      if (!body) {
+	        body = input._bodyInit
+	        input.bodyUsed = true
+	      }
+	    } else {
+	      this.url = input
+	    }
+	
+	    this.credentials = options.credentials || this.credentials || 'omit'
+	    if (options.headers || !this.headers) {
+	      this.headers = new Headers(options.headers)
+	    }
+	    this.method = normalizeMethod(options.method || this.method || 'GET')
+	    this.mode = options.mode || this.mode || null
+	    this.referrer = null
+	
+	    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+	      throw new TypeError('Body not allowed for GET or HEAD requests')
+	    }
+	    this._initBody(body)
+	  }
+	
+	  Request.prototype.clone = function() {
+	    return new Request(this)
+	  }
+	
+	  function decode(body) {
+	    var form = new FormData()
+	    body.trim().split('&').forEach(function(bytes) {
+	      if (bytes) {
+	        var split = bytes.split('=')
+	        var name = split.shift().replace(/\+/g, ' ')
+	        var value = split.join('=').replace(/\+/g, ' ')
+	        form.append(decodeURIComponent(name), decodeURIComponent(value))
+	      }
+	    })
+	    return form
+	  }
+	
+	  function headers(xhr) {
+	    var head = new Headers()
+	    var pairs = (xhr.getAllResponseHeaders() || '').trim().split('\n')
+	    pairs.forEach(function(header) {
+	      var split = header.trim().split(':')
+	      var key = split.shift().trim()
+	      var value = split.join(':').trim()
+	      head.append(key, value)
+	    })
+	    return head
+	  }
+	
+	  Body.call(Request.prototype)
+	
+	  function Response(bodyInit, options) {
+	    if (!options) {
+	      options = {}
+	    }
+	
+	    this.type = 'default'
+	    this.status = options.status
+	    this.ok = this.status >= 200 && this.status < 300
+	    this.statusText = options.statusText
+	    this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers)
+	    this.url = options.url || ''
+	    this._initBody(bodyInit)
+	  }
+	
+	  Body.call(Response.prototype)
+	
+	  Response.prototype.clone = function() {
+	    return new Response(this._bodyInit, {
+	      status: this.status,
+	      statusText: this.statusText,
+	      headers: new Headers(this.headers),
+	      url: this.url
+	    })
+	  }
+	
+	  Response.error = function() {
+	    var response = new Response(null, {status: 0, statusText: ''})
+	    response.type = 'error'
+	    return response
+	  }
+	
+	  var redirectStatuses = [301, 302, 303, 307, 308]
+	
+	  Response.redirect = function(url, status) {
+	    if (redirectStatuses.indexOf(status) === -1) {
+	      throw new RangeError('Invalid status code')
+	    }
+	
+	    return new Response(null, {status: status, headers: {location: url}})
+	  }
+	
+	  self.Headers = Headers
+	  self.Request = Request
+	  self.Response = Response
+	
+	  self.fetch = function(input, init) {
+	    return new Promise(function(resolve, reject) {
+	      var request
+	      if (Request.prototype.isPrototypeOf(input) && !init) {
+	        request = input
+	      } else {
+	        request = new Request(input, init)
+	      }
+	
+	      var xhr = new XMLHttpRequest()
+	
+	      function responseURL() {
+	        if ('responseURL' in xhr) {
+	          return xhr.responseURL
+	        }
+	
+	        // Avoid security warnings on getResponseHeader when not allowed by CORS
+	        if (/^X-Request-URL:/m.test(xhr.getAllResponseHeaders())) {
+	          return xhr.getResponseHeader('X-Request-URL')
+	        }
+	
+	        return
+	      }
+	
+	      xhr.onload = function() {
+	        var options = {
+	          status: xhr.status,
+	          statusText: xhr.statusText,
+	          headers: headers(xhr),
+	          url: responseURL()
+	        }
+	        var body = 'response' in xhr ? xhr.response : xhr.responseText
+	        resolve(new Response(body, options))
+	      }
+	
+	      xhr.onerror = function() {
+	        reject(new TypeError('Network request failed'))
+	      }
+	
+	      xhr.ontimeout = function() {
+	        reject(new TypeError('Network request failed'))
+	      }
+	
+	      xhr.open(request.method, request.url, true)
+	
+	      if (request.credentials === 'include') {
+	        xhr.withCredentials = true
+	      }
+	
+	      if ('responseType' in xhr && support.blob) {
+	        xhr.responseType = 'blob'
+	      }
+	
+	      request.headers.forEach(function(value, name) {
+	        xhr.setRequestHeader(name, value)
+	      })
+	
+	      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
+	    })
+	  }
+	  self.fetch.polyfill = true
+	})(typeof self !== 'undefined' ? self : this);
+
+
+/***/ },
+/* 171 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	exports.CLIENT_ID = 'V0WSPXBBDZJRJ2UNDN0QSKHG5LA2U1BEQH1KWUVNOFURT2HQ';
+	exports.CLIENT_SECRET = 'P14RQDZ4TS2OF5URP5RMMCLVJQZTM1YE2HX5XGB1JP0L1J2N';
+
+/***/ },
+/* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var fetch = __webpack_require__(169);
+	
+	var SAVE_USER = 'SAVE_USER';
+	// making POST request to backend with user details
+	var saveUser = function saveUser(user) {
+	  return function (dispatch) {
+	    return fetch('/saveuser', {
+	      method: 'POST',
+	      headers: {
+	        'Accept': 'application/json',
+	        'Content-Type': 'application/json'
+	      },
+	      body: JSON.stringify({
+	        firstName: user.firstName,
+	        lastName: user.lastName,
+	        email: user.email,
+	        foodType: user.foodType,
+	        city: user.city,
+	        state: user.state,
+	        restaurantName: user.restaurantName
+	      })
+	    }).then(function (response) {
+	      if (response.status < 200 || response.status >= 300) {
+	        var err = new Error(response.statusText);
+	        err.response = response;
+	        throw err;
+	      }
+	      return response;
+	    }).then(function (data) {
+	      return dispatch(userSaved());
+	    }).catch(function (err) {
+	      return dispatch(userNotSaved());
+	    });
+	  };
+	};
+	
+	var USER_SAVED = 'USER_SAVED';
+	var userSaved = function userSaved() {
+	  return {
+	    type: USER_SAVED
+	  };
+	};
+	
+	var USER_NOT_SAVED = 'USER_NOT_SAVED';
+	var userNotSaved = function userNotSaved() {
+	  return {
+	    type: USER_NOT_SAVED
+	  };
+	};
+	
+	exports.SAVE_USER = SAVE_USER;
+	exports.saveUser = saveUser;
+	exports.USER_SAVED = USER_SAVED;
+	exports.userSaved = userSaved;
+	exports.USER_NOT_SAVED = USER_NOT_SAVED;
+	exports.userNotSaved = userNotSaved;
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
 	exports.__esModule = true;
 	exports.connect = exports.Provider = undefined;
 	
-	var _Provider = __webpack_require__(169);
+	var _Provider = __webpack_require__(174);
 	
 	var _Provider2 = _interopRequireDefault(_Provider);
 	
-	var _connect = __webpack_require__(172);
+	var _connect = __webpack_require__(177);
 	
 	var _connect2 = _interopRequireDefault(_connect);
 	
@@ -20439,7 +21031,7 @@
 	exports.connect = _connect2["default"];
 
 /***/ },
-/* 169 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -20449,11 +21041,11 @@
 	
 	var _react = __webpack_require__(1);
 	
-	var _storeShape = __webpack_require__(170);
+	var _storeShape = __webpack_require__(175);
 	
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 	
-	var _warning = __webpack_require__(171);
+	var _warning = __webpack_require__(176);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -20523,7 +21115,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 170 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20539,7 +21131,7 @@
 	});
 
 /***/ },
-/* 171 */
+/* 176 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20568,7 +21160,7 @@
 	}
 
 /***/ },
-/* 172 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -20580,31 +21172,31 @@
 	
 	var _react = __webpack_require__(1);
 	
-	var _storeShape = __webpack_require__(170);
+	var _storeShape = __webpack_require__(175);
 	
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 	
-	var _shallowEqual = __webpack_require__(173);
+	var _shallowEqual = __webpack_require__(178);
 	
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 	
-	var _wrapActionCreators = __webpack_require__(174);
+	var _wrapActionCreators = __webpack_require__(179);
 	
 	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
 	
-	var _warning = __webpack_require__(171);
+	var _warning = __webpack_require__(176);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
-	var _isPlainObject = __webpack_require__(177);
+	var _isPlainObject = __webpack_require__(182);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _hoistNonReactStatics = __webpack_require__(188);
+	var _hoistNonReactStatics = __webpack_require__(193);
 	
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 	
-	var _invariant = __webpack_require__(189);
+	var _invariant = __webpack_require__(194);
 	
 	var _invariant2 = _interopRequireDefault(_invariant);
 	
@@ -20967,7 +21559,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 173 */
+/* 178 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -20998,7 +21590,7 @@
 	}
 
 /***/ },
-/* 174 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21006,7 +21598,7 @@
 	exports.__esModule = true;
 	exports["default"] = wrapActionCreators;
 	
-	var _redux = __webpack_require__(175);
+	var _redux = __webpack_require__(180);
 	
 	function wrapActionCreators(actionCreators) {
 	  return function (dispatch) {
@@ -21015,7 +21607,7 @@
 	}
 
 /***/ },
-/* 175 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -21023,27 +21615,27 @@
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 	
-	var _createStore = __webpack_require__(176);
+	var _createStore = __webpack_require__(181);
 	
 	var _createStore2 = _interopRequireDefault(_createStore);
 	
-	var _combineReducers = __webpack_require__(183);
+	var _combineReducers = __webpack_require__(188);
 	
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 	
-	var _bindActionCreators = __webpack_require__(185);
+	var _bindActionCreators = __webpack_require__(190);
 	
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 	
-	var _applyMiddleware = __webpack_require__(186);
+	var _applyMiddleware = __webpack_require__(191);
 	
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 	
-	var _compose = __webpack_require__(187);
+	var _compose = __webpack_require__(192);
 	
 	var _compose2 = _interopRequireDefault(_compose);
 	
-	var _warning = __webpack_require__(184);
+	var _warning = __webpack_require__(189);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -21067,7 +21659,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 176 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21076,11 +21668,11 @@
 	exports.ActionTypes = undefined;
 	exports["default"] = createStore;
 	
-	var _isPlainObject = __webpack_require__(177);
+	var _isPlainObject = __webpack_require__(182);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _symbolObservable = __webpack_require__(181);
+	var _symbolObservable = __webpack_require__(186);
 	
 	var _symbolObservable2 = _interopRequireDefault(_symbolObservable);
 	
@@ -21334,12 +21926,12 @@
 	}
 
 /***/ },
-/* 177 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getPrototype = __webpack_require__(178),
-	    isHostObject = __webpack_require__(179),
-	    isObjectLike = __webpack_require__(180);
+	var getPrototype = __webpack_require__(183),
+	    isHostObject = __webpack_require__(184),
+	    isObjectLike = __webpack_require__(185);
 	
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -21410,7 +22002,7 @@
 
 
 /***/ },
-/* 178 */
+/* 183 */
 /***/ function(module, exports) {
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
@@ -21431,7 +22023,7 @@
 
 
 /***/ },
-/* 179 */
+/* 184 */
 /***/ function(module, exports) {
 
 	/**
@@ -21457,7 +22049,7 @@
 
 
 /***/ },
-/* 180 */
+/* 185 */
 /***/ function(module, exports) {
 
 	/**
@@ -21492,18 +22084,18 @@
 
 
 /***/ },
-/* 181 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/* global window */
 	'use strict';
 	
-	module.exports = __webpack_require__(182)(global || window || this);
+	module.exports = __webpack_require__(187)(global || window || this);
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 182 */
+/* 187 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21528,7 +22120,7 @@
 
 
 /***/ },
-/* 183 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -21536,13 +22128,13 @@
 	exports.__esModule = true;
 	exports["default"] = combineReducers;
 	
-	var _createStore = __webpack_require__(176);
+	var _createStore = __webpack_require__(181);
 	
-	var _isPlainObject = __webpack_require__(177);
+	var _isPlainObject = __webpack_require__(182);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _warning = __webpack_require__(184);
+	var _warning = __webpack_require__(189);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -21661,7 +22253,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 184 */
+/* 189 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21691,7 +22283,7 @@
 	}
 
 /***/ },
-/* 185 */
+/* 190 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21747,7 +22339,7 @@
 	}
 
 /***/ },
-/* 186 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21758,7 +22350,7 @@
 	
 	exports["default"] = applyMiddleware;
 	
-	var _compose = __webpack_require__(187);
+	var _compose = __webpack_require__(192);
 	
 	var _compose2 = _interopRequireDefault(_compose);
 	
@@ -21810,7 +22402,7 @@
 	}
 
 /***/ },
-/* 187 */
+/* 192 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21855,7 +22447,7 @@
 	}
 
 /***/ },
-/* 188 */
+/* 193 */
 /***/ function(module, exports) {
 
 	/**
@@ -21903,7 +22495,7 @@
 
 
 /***/ },
-/* 189 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21961,18 +22553,303 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 190 */
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var redux = __webpack_require__(180);
+	var createStore = redux.createStore;
+	var applyMiddleware = redux.applyMiddleware;
+	var thunk = __webpack_require__(196).default;
+	
+	var combined = __webpack_require__(197);
+	
+	var store = createStore(combined.reducers, applyMiddleware(thunk));
+	module.exports = store;
+
+/***/ },
+/* 196 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	function createThunkMiddleware(extraArgument) {
+	  return function (_ref) {
+	    var dispatch = _ref.dispatch;
+	    var getState = _ref.getState;
+	    return function (next) {
+	      return function (action) {
+	        if (typeof action === 'function') {
+	          return action(dispatch, getState, extraArgument);
+	        }
+	
+	        return next(action);
+	      };
+	    };
+	  };
+	}
+	
+	var thunk = createThunkMiddleware();
+	thunk.withExtraArgument = createThunkMiddleware;
+	
+	exports['default'] = thunk;
+
+/***/ },
+/* 197 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var combineReducers = __webpack_require__(180).combineReducers;
+	
+	var user = __webpack_require__(198).userReducer;
+	var restaurant = __webpack_require__(199).restaurantReducer;
+	
+	var reducers = combineReducers({
+	  restaurant: restaurant,
+	  user: user
+	});
+	
+	exports.reducers = reducers;
+
+/***/ },
+/* 198 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var actions = __webpack_require__(172);
+	
+	var initialState = {
+	  confirmed: false // placeholder value until we know exactly what we want here.
+	};
+	
+	exports.userReducer = function (state, action) {
+	  state = state || initialState;
+	  if (action.type === actions.USER_SAVED) {
+	    var newState = update(state, {
+	      $set: {
+	        confirmed: true
+	      }
+	    });
+	    state = newState;
+	  } else if (action.type === actions.USER_NOT_SAVED) {
+	    console.log('==========USER_NOT_SAVED==========');
+	    var newState = update(state, {
+	      $set: {
+	        confirmed: false
+	      }
+	    });
+	    state = newState;
+	  }
+	  return state;
+	};
+
+/***/ },
+/* 199 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var actions = __webpack_require__(168);
+	var update = __webpack_require__(200);
+	
+	var initialState = [{
+	  url: null,
+	  photo: null,
+	  name: null,
+	  formattedAddress: null,
+	  city: null,
+	  state: null,
+	  rating: null
+	}];
+	
+	// currently only top restaurant result returned so only need to $set one objs params
+	exports.restaurantReducer = function (state, action) {
+	  state = state || initialState;
+	  if (action.type === actions.GET_RESTAURANT_SUCCESS) {
+	    var venue = action.data.groups[0].items[0].venue; // common location of needed params
+	    var newState = update(state, { 0: {
+	        $set: {
+	          url: venue.url,
+	          photo: venue.photos.groups[0], // never appears to be photos....
+	          name: venue.name,
+	          formattedAddress: venue.location.formattedAddress, // array of full address, front end can loop for ease
+	          city: venue.location.city, // saving city seperatly for matching
+	          state: venue.location.state,
+	          rating: venue.rating
+	        }
+	      } });
+	    console.log(newState);
+	    state = newState;
+	  } else if (action.type === actions.GET_RESTAURANT_ERROR) {
+	    console.log(action.err.response.status); // only logging err at the moment
+	  }
+	  return state;
+	};
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(201);
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule update
+	 */
+	
+	/* global hasOwnProperty:true */
+	
+	'use strict';
+	
+	var _assign = __webpack_require__(4);
+	
+	var keyOf = __webpack_require__(31);
+	var invariant = __webpack_require__(7);
+	var hasOwnProperty = {}.hasOwnProperty;
+	
+	function shallowCopy(x) {
+	  if (Array.isArray(x)) {
+	    return x.concat();
+	  } else if (x && typeof x === 'object') {
+	    return _assign(new x.constructor(), x);
+	  } else {
+	    return x;
+	  }
+	}
+	
+	var COMMAND_PUSH = keyOf({ $push: null });
+	var COMMAND_UNSHIFT = keyOf({ $unshift: null });
+	var COMMAND_SPLICE = keyOf({ $splice: null });
+	var COMMAND_SET = keyOf({ $set: null });
+	var COMMAND_MERGE = keyOf({ $merge: null });
+	var COMMAND_APPLY = keyOf({ $apply: null });
+	
+	var ALL_COMMANDS_LIST = [COMMAND_PUSH, COMMAND_UNSHIFT, COMMAND_SPLICE, COMMAND_SET, COMMAND_MERGE, COMMAND_APPLY];
+	
+	var ALL_COMMANDS_SET = {};
+	
+	ALL_COMMANDS_LIST.forEach(function (command) {
+	  ALL_COMMANDS_SET[command] = true;
+	});
+	
+	function invariantArrayCase(value, spec, command) {
+	  !Array.isArray(value) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'update(): expected target of %s to be an array; got %s.', command, value) : invariant(false) : void 0;
+	  var specValue = spec[command];
+	  !Array.isArray(specValue) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'update(): expected spec of %s to be an array; got %s. ' + 'Did you forget to wrap your parameter in an array?', command, specValue) : invariant(false) : void 0;
+	}
+	
+	/**
+	 * Returns a updated shallow copy of an object without mutating the original.
+	 * See https://facebook.github.io/react/docs/update.html for details.
+	 */
+	function update(value, spec) {
+	  !(typeof spec === 'object') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'update(): You provided a key path to update() that did not contain one ' + 'of %s. Did you forget to include {%s: ...}?', ALL_COMMANDS_LIST.join(', '), COMMAND_SET) : invariant(false) : void 0;
+	
+	  if (hasOwnProperty.call(spec, COMMAND_SET)) {
+	    !(Object.keys(spec).length === 1) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Cannot have more than one key in an object with %s', COMMAND_SET) : invariant(false) : void 0;
+	
+	    return spec[COMMAND_SET];
+	  }
+	
+	  var nextValue = shallowCopy(value);
+	
+	  if (hasOwnProperty.call(spec, COMMAND_MERGE)) {
+	    var mergeObj = spec[COMMAND_MERGE];
+	    !(mergeObj && typeof mergeObj === 'object') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'update(): %s expects a spec of type \'object\'; got %s', COMMAND_MERGE, mergeObj) : invariant(false) : void 0;
+	    !(nextValue && typeof nextValue === 'object') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'update(): %s expects a target of type \'object\'; got %s', COMMAND_MERGE, nextValue) : invariant(false) : void 0;
+	    _assign(nextValue, spec[COMMAND_MERGE]);
+	  }
+	
+	  if (hasOwnProperty.call(spec, COMMAND_PUSH)) {
+	    invariantArrayCase(value, spec, COMMAND_PUSH);
+	    spec[COMMAND_PUSH].forEach(function (item) {
+	      nextValue.push(item);
+	    });
+	  }
+	
+	  if (hasOwnProperty.call(spec, COMMAND_UNSHIFT)) {
+	    invariantArrayCase(value, spec, COMMAND_UNSHIFT);
+	    spec[COMMAND_UNSHIFT].forEach(function (item) {
+	      nextValue.unshift(item);
+	    });
+	  }
+	
+	  if (hasOwnProperty.call(spec, COMMAND_SPLICE)) {
+	    !Array.isArray(value) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Expected %s target to be an array; got %s', COMMAND_SPLICE, value) : invariant(false) : void 0;
+	    !Array.isArray(spec[COMMAND_SPLICE]) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'update(): expected spec of %s to be an array of arrays; got %s. ' + 'Did you forget to wrap your parameters in an array?', COMMAND_SPLICE, spec[COMMAND_SPLICE]) : invariant(false) : void 0;
+	    spec[COMMAND_SPLICE].forEach(function (args) {
+	      !Array.isArray(args) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'update(): expected spec of %s to be an array of arrays; got %s. ' + 'Did you forget to wrap your parameters in an array?', COMMAND_SPLICE, spec[COMMAND_SPLICE]) : invariant(false) : void 0;
+	      nextValue.splice.apply(nextValue, args);
+	    });
+	  }
+	
+	  if (hasOwnProperty.call(spec, COMMAND_APPLY)) {
+	    !(typeof spec[COMMAND_APPLY] === 'function') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'update(): expected spec of %s to be a function; got %s.', COMMAND_APPLY, spec[COMMAND_APPLY]) : invariant(false) : void 0;
+	    nextValue = spec[COMMAND_APPLY](nextValue);
+	  }
+	
+	  for (var k in spec) {
+	    if (!(ALL_COMMANDS_SET.hasOwnProperty(k) && ALL_COMMANDS_SET[k])) {
+	      nextValue[k] = update(value[k], spec[k]);
+	    }
+	  }
+	
+	  return nextValue;
+	}
+	
+	module.exports = update;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var connect = __webpack_require__(168).connect;
-	var actions = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../redux/actions\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var connect = __webpack_require__(173).connect;
+	var store = __webpack_require__(195);
 	
 	var ConfirmationPage = React.createClass({
 	  displayName: 'ConfirmationPage',
 	
+	  saveUser: function saveUser(event) {
+	    event.preventDefault();
+	    console.log('user being saveeeeed');
+	    var firstName = this.state.firstName;
+	    var lastName = this.state.lastName;
+	    var email = this.state.email;
+	    var foodType = this.state.foodType;
+	
+	    var restaurantName = this.props.eatup.restaurant[0].name;
+	    var restaurantState = this.props.eatup.restaurant[0].state;
+	    var restaurantCity = this.props.eatup.restaurant[0].city;
+	
+	    var user = {
+	      firstName: firstName,
+	      lastName: lastName,
+	      email: email,
+	      foodType: foodType,
+	      city: restaurantCity,
+	      state: restaurantState,
+	      restaurantName: restaurantName
+	    };
+	    this.props.dispatch(actions.saveUser(user));
+	  },
 	  render: function render() {
 	    return React.createElement(
 	      'section',
@@ -21985,12 +22862,45 @@
 	      React.createElement(
 	        'div',
 	        null,
-	        'Almost there! What do you think of this restaurant? Please hit confirm if you\'d like to eat there!"'
+	        'Almost there! What do you think of this restaurant? Please hit confirm if you\'d like to eat there!'
 	      ),
 	      React.createElement(
 	        'div',
 	        { className: 'restaurantResult' },
-	        '// information received from foursquare endpoint'
+	        React.createElement(
+	          'ul',
+	          null,
+	          React.createElement(
+	            'li',
+	            null,
+	            this.props.eatup.restaurant[0].url
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            this.props.eatup.restaurant[0].photo
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            this.props.eatup.restaurant[0].name
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            this.props.eatup.restaurant[0].formattedAddress
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            this.props.eatup.restaurant[0].city
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            this.props.eatup.restaurant[0].rating
+	          )
+	        )
 	      ),
 	      React.createElement(
 	        'div',
@@ -22013,19 +22923,25 @@
 	  }
 	});
 	
+	var mapStateToProps = function mapStateToProps(state, props) {
+	  return {
+	    eatup: state
+	  };
+	};
+	
 	var Container = connect(mapStateToProps)(ConfirmationPage);
 	
 	module.exports = Container;
 
 /***/ },
-/* 191 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var connect = __webpack_require__(168).connect;
-	var actions = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../redux/actions\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var connect = __webpack_require__(173).connect;
+	var actions = __webpack_require__(172);
 	
 	var Form = React.createClass({
 	  displayName: 'Form',
@@ -22130,19 +23046,25 @@
 	  }
 	});
 	
+	var mapStateToProps = function mapStateToProps(state, props) {
+	  return {
+	    eatup: state
+	  };
+	};
+	
 	var Container = connect(mapStateToProps)(Form);
 	
 	module.exports = Container;
 
 /***/ },
-/* 192 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var connect = __webpack_require__(168).connect;
-	var actions = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../redux/actions\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var connect = __webpack_require__(173).connect;
+	var actions = __webpack_require__(168);
 	
 	var ConfirmedPage = function ConfirmedPage() {
 	  return React.createElement(
@@ -22156,9 +23078,7 @@
 	  );
 	};
 	
-	var Container = connect(mapStateToProps)(ConfirmedPage);
-	
-	module.exports = Container;
+	module.exports = ConfirmedPage;
 
 /***/ }
 /******/ ]);
