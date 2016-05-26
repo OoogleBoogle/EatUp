@@ -1,32 +1,21 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var restaurantSchema = require('./restaurant');
-var foodSchema = require('./food');
+var venueSchema = require('./venue');
 var userSchema = require('./user');
 
 var mealSchema = new Schema({
-    food: {
+    venue: { //should be venue ID
         type: String,
-        ref: 'Food'
+        ref: 'Venue'
     },
-    restaurant: {
-        type: String,
-        ref: 'Restaurant'
-    },
-    date: {
-        type: Date
-    },
-    users: [{
+    users: [{ //should be user not users
         type: Schema.Types.ObjectId,
         ref: 'User'
     }]
-
 });
 var Meal = mongoose.model('Meal', mealSchema);
-var Food = mongoose.model('Food', foodSchema);
-var Restaurant = mongoose.model('Restaurant', restaurantSchema);
+var Venue = mongoose.model('Venue', venueSchema);
 var User = mongoose.model('User', userSchema);
 
 exports.Meal = Meal;
 exports.User = User;
-exports.Food = Food;
