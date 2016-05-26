@@ -7,16 +7,14 @@ var ConfirmationPage = React.createClass({
   saveUser: function(event) {
     event.preventDefault();
     console.log('user being saveeeeed', this.props.eatup);
-    var firstName = 'Connie';
-    var lastName = 'Jew';
-    var email = 'Email';
-    var foodType = 'Food Type';
+    var firstName = this.props.eatup.user.firstName;
+    var lastName = this.props.eatup.user.lastName;
+    var email = this.props.eatup.user.email;
+    var foodType = this.props.eatup.user.foodType;
 
     var restaurantName = this.props.eatup.restaurant[0].name;
     var restaurantState = this.props.eatup.restaurant[0].state;
     var restaurantCity = this.props.eatup.restaurant[0].city;
-
-    console.log('restaurant infoz', restaurantName, restaurantState, restaurantState);
 
     var user = {
       firstName: firstName,
