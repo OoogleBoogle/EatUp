@@ -20,30 +20,6 @@ var Link = router.link;
 var Link = require('react-router').Link
 
 var EatUp = React.createClass({
-  componentDidMount: function() {
-    var startPos;
-    var geoOptions = {
-       timeout: 10 * 1000
-    }
-    var that = this;
-    var geoSuccess = function(position) {
-      startPos = position;
-      that.setState({
-        lat: position.coords.latitude,
-        long: position.coords.longitude
-      });
-    };
-    var geoError = function(error) {
-      console.log('Error occurred. Error code: ' + error.code);
-      // error.code can be:
-      //   0: unknown error
-      //   1: permission denied
-      //   2: position unavailable (error response from location provider)
-      //   3: timed out
-    };
-
-    navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
-  },
   getRestaurant: function(data) {
 
     var latitude = this.state.lat;
@@ -64,14 +40,19 @@ var EatUp = React.createClass({
     store.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
   },
   render: function() {
+    console.log('hi', this.props);
     //TODO: if the textboxes are all filled out, diabled = false
     return (
-      <header>
-        <h1>EatUp</h1>
-        <p>Find dining companions near you!</p>
-        <Form getRestaurant={this.getRestaurant} />
-      </header>
-    )
+      <div>
+        <h1>
+          EatUp
+        </h1>
+        <p>Let us find a dining companion for you!</p>
+        <div>
+          {this.props.children}
+        </div>
+      </div>
+    );
   }
 });
 
@@ -88,7 +69,7 @@ var routes = (
   <Provider store={store}>
     <Router history={hashHistory}>
       <Route path="/" component={EatUp}>
-        <IndexRoute component={Container} />
+        <IndexRoute component={Form} />
         <Route path="/confirmationpage" component={ConfirmationPage} />
         <Route path="/confirmed" component={Confirmed} />
       </Route>
