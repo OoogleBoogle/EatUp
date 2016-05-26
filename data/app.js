@@ -44,7 +44,7 @@ var testUser = new User({
     // foodType: 'French', //talk with connie about expanding food taste selection
     city: 'Austin',
     state: 'Texas',
-    // restaurantName: 'McDonalds'
+    // venueName: 'McDonalds'
 });
 
 testUser.save(function(err) {
@@ -58,14 +58,19 @@ testUser.save(function(err) {
 app.post('/saveuser', function(req, res) {
     console.log('CODE HAS REACHED THIS POINT');
     var user = new User({
-        //TODO: LET SIMON KNOW THAT WE ARE SAVING RESTAURANT NAME
+        //TODO: LET SIMON KNOW THAT WE ARE SAVING VENUE NAME
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        foodType: req.body.foodType, //talk with connie about expanding food taste selection
         city: req.body.city,
         state: req.body.state,
-        restaurantName: req.body.restaurantName
+        venue_id: req.body.venue_id
+
+    });
+    var meal = new Meal({
+        user: user,
+        console.log('USER EXISTS HERE', user);
+        venue_id: req.body.venue_id //store venue ID instead
     });
     user.save(function(err) {
         if (err) return handleError(err);
@@ -79,13 +84,14 @@ app.post('/saveuser', function(req, res) {
     });
 
 });
-//TODO: exclude repeat names upon querying city, foodType, and restaurantName
+//TODO: exclude repeat names upon querying city, foodType, and venueName
 
+//TODO: ADD QUERY FOR MEALS
 var queryUsers = function(city) {
     User.find({
         city: city
             // foodType: foodType,
-            // restaurantName: restaurantName,
+            // venueName: venueName,
             //id: id
     }, function(err, user) {
         if (err) {
