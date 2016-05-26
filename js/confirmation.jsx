@@ -49,7 +49,7 @@ var ConfirmationPage = React.createClass({
             <li>{this.props.eatup.restaurant[0].url}</li>
             <li>{this.props.eatup.restaurant[0].photo}</li>
             <li>{this.props.eatup.restaurant[0].name}</li>
-            <li>{restaurantAddress}</li>
+            {restaurantAddress}
             <li>{this.props.eatup.restaurant[0].city}</li>
             <li>{this.props.eatup.restaurant[0].rating}</li>
           </ul>
