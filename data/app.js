@@ -24,17 +24,6 @@ app.use(function(req, res, next) {
 // });
 
 console.log('THIS IS THE USER', User);
-var testUser = new User({
-    firstName: 'Stone Cold',
-    lastName: 'Steve Austin',
-    email: 'austin316@gmail.com'
-});
-
-testUser.save(function(err) {
-    if (err) {
-        return 'USER DID NOT SAVE!';
-    }
-});
 
 app.get('/users', function(req,res) {
     User.find({}, function(err, users){
@@ -83,50 +72,11 @@ app.post('/saveuser', function(req, res) {
 
     newUser.save(function(err) {
         if (err) return handleError(err);
-        // check if there is a matched person
         res.json({message: 'saved!'});
     });
 });
 
 //TODO: exclude repeat names upon querying city, foodType, and venueName
-app.post('/users/:user_id/meals', function(){
-    var user_id = request.params.user_id;
-    var meal = new Meal({
-        city: req.body.city,
-        state: req.body.state,
-        restaurantName: req.body.restaurantName,
-        venue_id: req.body.venue_id,
-    });
-    meal.save(function(err) {
-        if (err) return handleError(err);
-    });
-
-queryMeals(venue_id, user);
-
-});
-
-var queryMeals = function(venue_id, user) {
-    // venue_id -> is there another meal alreay
-    Meal.find({
-        venue_id: venue_id,
-        user: user
-    }, function(err, Meal) {
-        if (err) {
-            console.log("NO MATCHING DATES FOUND");
-            // Meal.save(function(err) {
-            //     if (err) return handleError(err);
-            // });
-            mongoose.disconnect();
-            return;
-        } else if (Meal) {
-                console.log(Meal);
-                //TODO: bring in matched user
-                if(meal.venue_id !== userid)
-
-                mongoose.disconnect();
-        }
-    });
-};
 
 app.listen(8080, function() {
     console.log('Running on port 8080');
