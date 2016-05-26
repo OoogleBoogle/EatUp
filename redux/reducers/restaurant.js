@@ -7,6 +7,10 @@ var initialState = [{
   name: null,
   formattedAddress: null,
   city: null,
+<<<<<<< HEAD
+=======
+  state: null,
+>>>>>>> dev
   rating: null
 }];
 
@@ -22,6 +26,10 @@ exports.restaurantReducer = function(state, action) {
         name: venue.name,
         formattedAddress: venue.location.formattedAddress, // array of full address, front end can loop for ease
         city: venue.location.city, // saving city seperatly for matching
+<<<<<<< HEAD
+=======
+        state: venue.location.state,
+>>>>>>> dev
         rating: venue.rating
       }
     }})

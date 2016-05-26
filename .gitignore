@@ -1,4 +1,5 @@
 node_modules
-build
-.sass-cache
 redux/secrets.js
+mailer/secrets.js
+.sass-cache
+npm-debug.log
