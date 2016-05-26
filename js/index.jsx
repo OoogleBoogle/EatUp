@@ -4,19 +4,16 @@ var restaurantActions = require('../redux/actions/restaurant.js');
 var userActions = require('../redux/actions/user.js');
 var Provider = require('react-redux').Provider;
 var store = require('../redux/store.js');
-
 var ConfirmationPage = require('./confirmation.jsx');
 var Form = require('./form.jsx');
 var Confirmed = require('./confirmed.jsx');
 
 var connect = require('react-redux').connect;
-
 var router = require('react-router');
 var Router = router.Router;
 var Route = router.Route;
 var hashHistory = router.hashHistory;
 var IndexRoute = router.IndexRoute;
-var Link = router.link;
 var Link = require('react-router').Link
 
 var EatUp = React.createClass({

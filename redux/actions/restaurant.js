@@ -2,8 +2,12 @@ require('isomorphic-fetch');
 var ids = require('../secrets.js'); // seperate file for api ID's so not checked into github
 
 // Api call to FourSquare API.
+<<<<<<< HEAD
+var getRestaurant = function(long, lat, foodType) {
+=======
 var getRestaurant = function(lat, long, foodType) {
   console.log('foursquare');
+>>>>>>> dev
   var options = {
     base_url: 'https://api.foursquare.com/v2/venues/explore?', // using 'explore' endpoint over 'search', yealded better 'top' results.
     coords: 'll=' + long + ',' + lat,
