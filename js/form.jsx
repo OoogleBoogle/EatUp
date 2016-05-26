@@ -59,9 +59,9 @@ var Form = React.createClass({
   },
   render: function() {
     return (
-      <form onSubmit={this.getRestaurant} class="restaurantSearch">
-        <input id="latitude" ref="latitude" type="text"></input>
-        <input id="longitude" ref="longitude" type="text"></input>
+      <form onSubmit={this.getRestaurant} className="restaurantSearch">
+        <input id="latitude" ref="latitude" hidden="true" type="text"></input>
+        <input id="longitude" ref="longitude" hidden="true" type="text"></input>
         <div>
           <input type="text" ref="firstName" placeholder="First name"></input>
           <input type="text" ref="lastName" placeholder="Last name"></input>
@@ -69,8 +69,8 @@ var Form = React.createClass({
         <div>
           <input type="text" ref="email" placeholder="Enter your email..."></input>
         </div>
-        <div>What do you want to eat today?</div>
-        <select ref="foodType" id="foodType">
+        <h3>What do you want to eat today?</h3>
+        <select ref="foodType" id="foodType" className="foodTypeSelector">
           <option value="chinese">Chinese</option>
           <option value="indian">Indian</option>
           <option value="mexican">Mexican</option>

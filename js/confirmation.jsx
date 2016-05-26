@@ -3,39 +3,39 @@ var connect = require('react-redux').connect;
 var store = require('../redux/store.js');
 var actions = require('../redux/actions/user.js')
 
+var router = require('react-router');
+var Router = router.Router;
+var Route = router.Route;
+var Link = require('react-router').Link;
+var hashHistory = router.hashHistory;
+
+
 var ConfirmationPage = React.createClass({
   saveUser: function(event) {
     event.preventDefault();
-    console.log('user being saveeeeed', this.props.eatup);
-    var firstName = this.props.eatup.user.firstName;
-    var lastName = this.props.eatup.user.lastName;
-    var email = this.props.eatup.user.email;
-    var foodType = this.props.eatup.user.foodType;
-
-    var restaurantName = this.props.eatup.restaurant[0].name;
-    var restaurantState = this.props.eatup.restaurant[0].state;
-    var restaurantCity = this.props.eatup.restaurant[0].city;
 
     var user = {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      foodType: foodType,
-      city: restaurantCity,
-      state: restaurantState,
-      restaurantName: restaurantName
+      firstName: this.props.eatup.user.firstName,
+      lastName: this.props.eatup.user.lastName,
+      email: this.props.eatup.user.email,
+      foodType: this.props.eatup.user.foodType,
+      city: this.props.eatup.restaurant[0].city,
+      state: this.props.eatup.restaurant[0].state,
+      restaurantName: this.props.eatup.restaurant[0].name,
+      venue_id: this.props.eatup.restaurant[0].venue_id
     };
 
     console.log('the userrrr', user);
 
     this.props.dispatch(actions.saveUser(user));
+    hashHistory.push("/confirmed")
   },
   render: function() {
     console.log('confirmation page infoz');
     return (
-      <section>
+      <section className="confirmationPage">
         <h3>Confirmation Page</h3>
-        <div>Almost there! What do you think of this restaurant? Please hit confirm if you'd like to eat there!</div>
+        <h4>Almost there! What do you think of this restaurant? Please hit confirm if you'd like to eat there!</h4>
         <div className="restaurantResult">
           <ul>
             <li>{this.props.eatup.restaurant[0].url}</li>

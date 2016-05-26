@@ -17,7 +17,7 @@ var saveUser = function(user) {
         city: user.city,
         state: user.state,
         restaurantName: user.restaurantName,
-        venue_id: venue_id
+        venue_id: user.venue_id
       })
     })
     .then(function(response) {
