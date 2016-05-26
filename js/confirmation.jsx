@@ -52,6 +52,7 @@ var ConfirmationPage = React.createClass({
 
 var ConfirmButton = React.createClass({
   render: function() {
+    console.log(this.props);
     return (
       <button type="submit" onClick={this.props.confirmFunction}>{this.props.text}</button>
     )
