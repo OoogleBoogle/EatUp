@@ -55,9 +55,9 @@ var Form = React.createClass({
     this.props.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
     this.props.dispatch(userActions.storeUser(user));
     hashHistory.push("/confirmationpage")
-    console.log('getting restaurant in form');
   },
   render: function() {
+    console.log('getting restaurant in form', document.body.innerHTML);
     return (
       <form onSubmit={this.getRestaurant} className="restaurantSearch">
         <input id="latitude" ref="latitude" hidden="true" type="text"></input>
