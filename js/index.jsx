@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var actions = require('../redux/actions/restaurant.js');
-var actions = require('../redux/actions/user.js');
+var restaurantActions = require('../redux/actions/restaurant.js');
+var userActions = require('../redux/actions/user.js');
 var Provider = require('react-redux').Provider;
 var store = require('../redux/store.js');
 
@@ -20,70 +20,44 @@ var Link = router.link;
 var Link = require('react-router').Link
 
 var EatUp = React.createClass({
-  componentDidMount: function() {
-    console.log('function called');
-    var startPos;
-    var geoOptions = {
-       timeout: 10 * 1000
-    }
-    var that = this;
-    var geoSuccess = function(position) {
-      startPos = position;
-      that.setState({
-        lat: position.coords.latitude,
-        long: position.coords.longitude
-      });
-    };
-    var geoError = function(error) {
-      console.log('Error occurred. Error code: ' + error.code);
-      // error.code can be:
-      //   0: unknown error
-      //   1: permission denied
-      //   2: position unavailable (error response from location provider)
-      //   3: timed out
-    };
+  getRestaurant: function(data) {
 
-    navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
-  },
-  getRestaurant: function(event) {
-    event.preventDefault();
-
-    var firstName = this.refs.firstName.value;
-    var lastName = this.refs.lastName.value;
-    var email = this.refs.email.value;
-    var latitude = parseInt(this.state.lat);
-    var longitude = parseInt(this.state.long);
+    var latitude = this.state.lat;
+    var longitude = this.state.long;
     var foodSelector = document.getElementById("foodType");
-    var foodType = foodSelector.value;
+    var foodType = data.foodType;
 
     this.setState({
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      foodType: foodType
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      foodType: data.foodType
     });
+    console.log(latitude, longitude, foodType);
+    console.log('getting restaurant', this.state);
 
-    console.log(event.target);
-    console.log('getRestaurant', userLocation);
 
-    console.log('foodtype', foodType);
-    console.log('lat', latitude);
-    console.log('long', longitude);
-    this.props.dispatch(actions.getRestaurant(longitude, latitude, foodType));
+    store.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
   },
   render: function() {
+    console.log('hi', this.props);
     //TODO: if the textboxes are all filled out, diabled = false
     return (
-      <header>
-        <h1>EatUp</h1>
-        <p>Find dining companions near you!</p>
-        {this.props.children}
-      </header>
-    )
+      <div>
+        <h1>
+          EatUp
+        </h1>
+        <p>Let us find a dining companion for you!</p>
+        <div>
+          {this.props.children}
+        </div>
+      </div>
+    );
   }
 });
 
 var mapStateToProps = function(state, props) {
+  console.log('hello');
   return {
     eatup: state
   };
