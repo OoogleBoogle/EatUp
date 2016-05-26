@@ -4,48 +4,37 @@ var schema = mongoose.Schema;
 var bodyParser = require('body-parser');
 var express = require('express');
 var app = express();
+var Meal = require('../model/meal').Meal;
+var User = require('../model/meal').User;
+mongoose.connect('mongodb://localhost/eatup-test');
+
+
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
-var Meal = require('../model/meal').Meal;
-var User = require('../model/meal').User;
-var Food = require('../model/meal').Food;
-//mongoose.connect('mongodb://localhost/eatup-test');
-
-
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
 
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'CONNECTION ERROR MESSAGE:'));
-db.once('open', function() {
+
+mongoose.connection.on('error', console.error.bind(console, 'CONNECTION ERROR MESSAGE:'));
+mongoose.connection.once('open', function() {
     console.log('DB CONNECTION SUCCESSFUL');
 });
-// var connection = mongoose.createConnection('mongodb://localhost/eatup-test');
-//
-// mongoose.connection.on('error', function(err) {
-//     console.error('COULD NOT CONNECT. Error:', err);
-// });
-
-
-// MODELS
-// MODELS HAVE BEEN EXPORTED TO MODEL DIRECTORY
-// END MODELS
 
 console.log('THIS IS THE USER', User);
 var testUser = new User({
     firstName: 'Stone Cold',
     lastName: 'Steve Austin',
     email: 'austin316@gmail.com',
-    // foodType: 'French', //talk with connie about expanding food taste selection
     city: 'Austin',
     state: 'Texas',
-    // restaurantName: 'McDonalds'
 });
+
+
 
 testUser.save(function(err) {
     if (err) {
@@ -58,43 +47,44 @@ testUser.save(function(err) {
 app.post('/saveuser', function(req, res) {
     console.log('CODE HAS REACHED THIS POINT');
     var user = new User({
-        //TODO: LET SIMON KNOW THAT WE ARE SAVING RESTAURANT NAME
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        foodType: req.body.foodType, //talk with connie about expanding food taste selection
         city: req.body.city,
         state: req.body.state,
-        restaurantName: req.body.restaurantName
+        venue_id: req.body.venue_id
+    });
+    var meal = new Meal({
+        user: user,
+        venue_id: req.body.venue_id //store venue ID instead
     });
     user.save(function(err) {
         if (err) return handleError(err);
-        Food.find({
-            foodType: req.body.foodType
-        }, function(err, food) {
-            console.log(food);
-        });
-        // Should save it error is not returned
-        //TODO: find out how to store save user to collection
+    });
+    meal.save(function(err) {
+        if (err) return handleError(err);
     });
 
 });
-//TODO: exclude repeat names upon querying city, foodType, and restaurantName
+//TODO: exclude repeat names upon querying city, foodType, and venueName
 
-var queryUsers = function(city) {
-    User.find({
-        city: city
-            // foodType: foodType,
-            // restaurantName: restaurantName,
-            //id: id
-    }, function(err, user) {
+var queryMeals = function(venue_id, user) {
+    Meal.findOne({
+        venue_id: venue_id,
+        user: user
+    }, function(err, Meal) {
         if (err) {
-            console.log("USER NOT FOUND", name);
+            console.log("NO MATCHING DATES FOUND");
+            Meal.save(function(err) {
+                if (err) return handleError(err);
+            });
             mongoose.disconnect();
             return;
+        } else {
+            //TODO: include transactional mail code here
+            console.log("DATE FOUND!", Meal);
+            mongoose.disconnect();
         }
-        console.log("USER FOUND!", name);
-        mongoose.disconnect();
     });
 };
 //TODO: discover how to compare users
@@ -112,14 +102,3 @@ app.listen(8080, function() {
 
 //queryUser('Stone Cold Steve Austin');
 //findUser('Kaeside');
-
-//BEGIN ADDTL FEATURES
-
-
-//SCHEMA FOR MESSAGES
-
-//Locking People Out from meeting up with other people once they commit to a date for that day only
-
-//FIND USER BY FOOD AND location
-
-// END OF ADDTL FEATURES

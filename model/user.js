@@ -5,15 +5,13 @@ var userSchema = new Schema({
     firstName: String,
     lastName: String,
     email: String,
-    foodType: {
+    venueName: {
         type: String,
-        ref: 'Food'
+        ref: 'Venue'
     },
-    city: String,
-    state: String,
-    restaurantName: {
+    venueID: {
         type: String,
-        ref: 'Restaurant'
+        ref: 'VenueID'
     }
 
 });
