@@ -1,9 +1,12 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+
 var restaurantActions = require('../redux/actions/restaurant.js');
 var userActions = require('../redux/actions/user.js');
+
 var Provider = require('react-redux').Provider;
 var store = require('../redux/store.js');
+
 var ConfirmationPage = require('./confirmation.jsx');
 var Form = require('./form.jsx');
 var Confirmed = require('./confirmed.jsx');
@@ -18,7 +21,6 @@ var Link = require('react-router').Link
 
 var EatUp = React.createClass({
   getRestaurant: function(data) {
-
     var latitude = this.state.lat;
     var longitude = this.state.long;
     var foodSelector = document.getElementById("foodType");
@@ -34,7 +36,9 @@ var EatUp = React.createClass({
     console.log('getting restaurant', this.state);
 
 
-    store.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
+    this.props.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
+    console.log('getting restaurant');
+
   },
   render: function() {
     console.log('hi', this.props);

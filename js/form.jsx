@@ -6,6 +6,7 @@ var router = require('react-router');
 var Link = require('react-router').Link;
 var Router = router.Router;
 var Route = router.Route;
+var hashHistory = router.hashHistory;
 
 var store = require('../redux/store.js');
 var restaurantActions = require('../redux/actions/restaurant.js');
@@ -35,13 +36,7 @@ var Form = React.createClass({
   },
   preventRefresh: function(event) {
     event.preventDefault();
-    // console.log('form', this.props.getRestaurant);
-    // this.props.getRestaurant({
-    //   firstName: this.refs.firstName.value,
-    //   lastName: this.refs.lastName.value,
-    //   email: this.refs.email.value,
-    //   foodType: this.refs.foodType.value
-    // });
+
     var firstName = this.refs.firstName.value;
     var lastName = this.refs.lastName.value;
     var email = this.refs.email.value;
@@ -50,15 +45,11 @@ var Form = React.createClass({
     var foodSelector = document.getElementById("foodType");
     var foodType = foodSelector.value;
 
-    // this.setState({
-    //   firstName: data.firstName,
-    //   lastName: data.lastName,
-    //   email: data.email,
-    //   foodType: data.foodType
-    // });
-    console.log(latitude, longitude, foodType);
-    //console.log('getting restaurant', this.state);
-    store.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
+    console.log('the user!!', firstName, lastName, email);
+
+    this.props.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
+    hashHistory.push("/confirmationpage")
+    console.log('getting restaurant in form');
   },
   render: function() {
     return (
@@ -94,14 +85,14 @@ var Form = React.createClass({
 
 var FormButton = React.createClass({
   render: function() {
-    console.log(this.props);
     return (
-      <button type="submit">{this.props.text}</button>
+      <button type="submit"> {this.props.text} </button>
     )
   }
 });
 
 var mapStateToProps = function(state, props) {
+  console.log('mapping state to props in form');
   return {
     eatup: state
   };
