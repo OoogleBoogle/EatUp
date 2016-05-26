@@ -10,13 +10,13 @@ module.exports = {
     entry: path.resolve(__dirname, packageData.main),
     output: {
         path: path.resolve(__dirname, 'build'),
-        filename: filename.join('.'),
+        filename: 'index.js',
     },
     devtool: 'source-map',
     module: {
       loaders: [
         {
-          test: /\.jsx$/,
+          test: /\.jsx?$/,
           exclude: /(node_modules)/,
           loader: 'babel',
           query: {
