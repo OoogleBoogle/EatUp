@@ -14,10 +14,10 @@ var saveUser = function(user) {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        foodType: user.foodType,
         city: user.city,
         state: user.state,
-        restaurantName: user.restaurantName
+        restaurantName: user.restaurantName,
+        venue_id: venue_id
       })
     })
     .then(function(response) {

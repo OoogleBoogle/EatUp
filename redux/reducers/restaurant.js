@@ -8,7 +8,8 @@ var initialState = [{
   formattedAddress: null,
   city: null,
   state: null,
-  rating: null
+  rating: null,
+  venue_id: null
 }];
 
 // currently only top restaurant result returned so only need to $set one objs params
@@ -24,7 +25,8 @@ exports.restaurantReducer = function(state, action) {
         formattedAddress: venue.location.formattedAddress, // array of full address, front end can loop for ease
         city: venue.location.city, // saving city seperatly for matching
         state: venue.location.state,
-        rating: venue.rating
+        rating: venue.rating,
+        venue_id: venue.id
       }
     }})
     console.log(newState);
