@@ -1,14 +1,15 @@
 var React = require('react');
 var connect = require('react-redux').connect;
-var actions = require('../redux/actions/restaurant.js');
 
 var router = require('react-router');
 var Link = require('react-router').Link;
 var Router = router.Router;
 var Route = router.Route;
+var hashHistory = router.hashHistory;
 
 var store = require('../redux/store.js');
 var restaurantActions = require('../redux/actions/restaurant.js');
+var userActions = require('../redux/actions/user.js');
 
 var Form = React.createClass({
   componentDidMount: function() {
@@ -33,36 +34,32 @@ var Form = React.createClass({
 
     navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
   },
-  preventRefresh: function(event) {
+  getRestaurant: function(event) {
     event.preventDefault();
-    // console.log('form', this.props.getRestaurant);
-    // this.props.getRestaurant({
-    //   firstName: this.refs.firstName.value,
-    //   lastName: this.refs.lastName.value,
-    //   email: this.refs.email.value,
-    //   foodType: this.refs.foodType.value
-    // });
-    var firstName = this.refs.firstName.value;
-    var lastName = this.refs.lastName.value;
-    var email = this.refs.email.value;
-    var latitude = this.refs.latitude.value;
-    var longitude = this.refs.longitude.value;
+
     var foodSelector = document.getElementById("foodType");
     var foodType = foodSelector.value;
 
-    // this.setState({
-    //   firstName: data.firstName,
-    //   lastName: data.lastName,
-    //   email: data.email,
-    //   foodType: data.foodType
-    // });
-    console.log(latitude, longitude, foodType);
-    //console.log('getting restaurant', this.state);
-    store.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
+    var user = {
+      firstName: this.refs.firstName.value,
+      lastName: this.refs.lastName.value,
+      email: this.refs.email.value,
+      foodType: foodType
+    };
+
+    var latitude = this.refs.latitude.value;
+    var longitude = this.refs.longitude.value;
+
+    console.log('the user!!', user);
+
+    this.props.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
+    this.props.dispatch(userActions.storeUser(user));
+    hashHistory.push("/confirmationpage")
+    console.log('getting restaurant in form');
   },
   render: function() {
     return (
-      <form onSubmit={this.preventRefresh} class="restaurantSearch">
+      <form onSubmit={this.getRestaurant} class="restaurantSearch">
         <input id="latitude" ref="latitude" type="text"></input>
         <input id="longitude" ref="longitude" type="text"></input>
         <div>
@@ -94,14 +91,14 @@ var Form = React.createClass({
 
 var FormButton = React.createClass({
   render: function() {
-    console.log(this.props);
     return (
-      <button type="submit">{this.props.text}</button>
+      <button type="submit"> {this.props.text} </button>
     )
   }
 });
 
 var mapStateToProps = function(state, props) {
+  console.log('mapping state to props in form');
   return {
     eatup: state
   };
