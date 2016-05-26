@@ -1,16 +1,16 @@
 var React = require('react');
 var connect = require('react-redux').connect;
 var store = require('../redux/store.js');
-
+var actions = require('../redux/actions/user.js')
 
 var ConfirmationPage = React.createClass({
   saveUser: function(event) {
     event.preventDefault();
-    console.log('user being saveeeeed');
-    var firstName = this.state.firstName;
-    var lastName = this.state.lastName;
-    var email = this.state.email;
-    var foodType = this.state.foodType;
+    console.log('user being saveeeeed', this.props.eatup);
+    var firstName = this.props.eatup.user.firstName;
+    var lastName = this.props.eatup.user.lastName;
+    var email = this.props.eatup.user.email;
+    var foodType = this.props.eatup.user.foodType;
 
     var restaurantName = this.props.eatup.restaurant[0].name;
     var restaurantState = this.props.eatup.restaurant[0].state;
@@ -25,9 +25,13 @@ var ConfirmationPage = React.createClass({
       state: restaurantState,
       restaurantName: restaurantName
     };
+
+    console.log('the userrrr', user);
+
     this.props.dispatch(actions.saveUser(user));
   },
   render: function() {
+    console.log('confirmation page infoz');
     return (
       <section>
         <h3>Confirmation Page</h3>
@@ -52,7 +56,6 @@ var ConfirmationPage = React.createClass({
 
 var ConfirmButton = React.createClass({
   render: function() {
-    console.log(this.props);
     return (
       <button type="submit" onClick={this.props.confirmFunction}>{this.props.text}</button>
     )
@@ -60,6 +63,7 @@ var ConfirmButton = React.createClass({
 });
 
 var mapStateToProps = function(state, props) {
+  console.log('mapping state to props');
   return {
     eatup: state
   };
