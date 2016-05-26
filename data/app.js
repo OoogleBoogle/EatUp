@@ -2,21 +2,28 @@ require('../db/connect');
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
 var bodyParser = require('body-parser');
-var User = require('../model/user');
 var express = require('express');
 var app = express();
-mongoose.connect('mongodb://localhost/eatup-test');
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(bodyParser.json());
+var Meal = require('../model/meal').Meal;
+var User = require('../model/meal').User;
+var Food = require('../model/meal').Food;
+//mongoose.connect('mongodb://localhost/eatup-test');
+
 
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
 });
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'CONNECTION ERROR MESSAGE:'));
 db.once('open', function() {
-  console.log('DB CONNECTION SUCCESSFUL');
+    console.log('DB CONNECTION SUCCESSFUL');
 });
 // var connection = mongoose.createConnection('mongodb://localhost/eatup-test');
 //
@@ -29,16 +36,15 @@ db.once('open', function() {
 // MODELS HAVE BEEN EXPORTED TO MODEL DIRECTORY
 // END MODELS
 
-
+console.log('THIS IS THE USER', User);
 var testUser = new User({
-    firstname: 'Stone Cold',
-    lastname: 'Steve Austin',
+    firstName: 'Stone Cold',
+    lastName: 'Steve Austin',
     email: 'austin316@gmail.com',
-    food: 'French', //talk with connie about expanding food taste selection
-    location: {
-        city: 'Austin',
-        state: 'Texas'
-    }
+    // foodType: 'French', //talk with connie about expanding food taste selection
+    city: 'Austin',
+    state: 'Texas',
+    // restaurantName: 'McDonalds'
 });
 
 testUser.save(function(err) {
@@ -46,28 +52,41 @@ testUser.save(function(err) {
         return 'USER DID NOT SAVE!';
     }
 });
-app.post('/saveuser', bodyParser, )
-var createUser = function(firstname, lastname, email, foodType, city, state) { //give variable names to connie for creating user and finding user
-    var user = new User({
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        foodType: foodType, //talk with connie about expanding food taste selection
-        location: {
-            city: city,
-            state: state
-        }
-    });
 
+// TODO: retrieve object from Redux
+
+app.post('/saveuser', function(req, res) {
+    console.log('CODE HAS REACHED THIS POINT');
+    var user = new User({
+        //TODO: LET SIMON KNOW THAT WE ARE SAVING RESTAURANT NAME
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        foodType: req.body.foodType, //talk with connie about expanding food taste selection
+        city: req.body.city,
+        state: req.body.state,
+        restaurantName: req.body.restaurantName
+    });
     user.save(function(err) {
         if (err) return handleError(err);
-        // saved!
+        Food.find({
+            foodType: req.body.foodType
+        }, function(err, food) {
+            console.log(food);
+        });
+        // Should save it error is not returned
+        //TODO: find out how to store save user to collection
     });
-};
 
-var findUser = function(name) {
-    User.findOne({
-        name: name
+});
+//TODO: exclude repeat names upon querying city, foodType, and restaurantName
+
+var queryUsers = function(city) {
+    User.find({
+        city: city
+            // foodType: foodType,
+            // restaurantName: restaurantName,
+            //id: id
     }, function(err, user) {
         if (err) {
             console.log("USER NOT FOUND", name);
@@ -78,17 +97,21 @@ var findUser = function(name) {
         mongoose.disconnect();
     });
 };
+//TODO: discover how to compare users
 
-User.find(function(err, user) {
-    if (err) {
-        errback(err);
-        return;
-    }
-    console.log(user);
+app.listen(8080, function() {
+    console.log('Running on port 8080');
 });
 
-findUser('Stone Cold Steve Austin');
-findUser('Kaeside');
+// queryUsers.exec(function(err, user) {
+//     if (err) throw err;
+//     res.send({
+//         user: user
+//     });
+// });
+
+//queryUser('Stone Cold Steve Austin');
+//findUser('Kaeside');
 
 //BEGIN ADDTL FEATURES
 

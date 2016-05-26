@@ -2,16 +2,21 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var userSchema = new Schema({
-    firstname: String,
-    lastname: String,
+    firstName: String,
+    lastName: String,
     email: String,
-    location: {
-        city: String, //[latitude, longitude] has to be in this order if we wish to incorporate geospatial location
-        state: String
+    foodType: {
+        type: String,
+        ref: 'Food'
     },
-    food: String
+    city: String,
+    state: String,
+    restaurantName: {
+        type: String,
+        ref: 'Restaurant'
+    }
 
 });
-var User = mongoose.model('User', userSchema);
 
-module.exports = User;
+
+module.exports = userSchema;
