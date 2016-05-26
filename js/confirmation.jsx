@@ -31,7 +31,15 @@ var ConfirmationPage = React.createClass({
     hashHistory.push("/confirmed")
   },
   render: function() {
-    console.log('confirmation page infoz');
+    console.log('confirmation page infoz', this.props.eatup.restaurant[0]);
+    if (this.props.eatup.restaurant[0].formattedAddress != null) {
+      var restaurantAddress = this.props.eatup.restaurant[0].formattedAddress.map(function(address, index) {
+        return (
+          <li>{address}</li>
+        )
+      })
+    }
+
     return (
       <section className="confirmationPage">
         <h3>Confirmation Page</h3>
@@ -41,7 +49,7 @@ var ConfirmationPage = React.createClass({
             <li>{this.props.eatup.restaurant[0].url}</li>
             <li>{this.props.eatup.restaurant[0].photo}</li>
             <li>{this.props.eatup.restaurant[0].name}</li>
-            <li>{this.props.eatup.restaurant[0].formattedAddress}</li>
+            {restaurantAddress}
             <li>{this.props.eatup.restaurant[0].city}</li>
             <li>{this.props.eatup.restaurant[0].rating}</li>
           </ul>
