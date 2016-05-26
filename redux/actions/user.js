@@ -17,7 +17,7 @@ var saveUser = function(user) {
         city: user.city,
         state: user.state,
         restaurantName: user.restaurantName,
-        venue_id: venue_id
+        venue_id: user.venue_id
       })
     })
     .then(function(response) {
@@ -51,9 +51,19 @@ var userNotSaved = function() {
   }
 }
 
+var STORE_USER = 'STORE_USER';
+var storeUser = function(user) {
+  return {
+    type: STORE_USER,
+    user: user
+  }
+}
+
 exports.SAVE_USER = SAVE_USER;
 exports.saveUser = saveUser;
 exports.USER_SAVED = USER_SAVED;
 exports.userSaved = userSaved;
 exports.USER_NOT_SAVED = USER_NOT_SAVED;
 exports.userNotSaved = userNotSaved;
+exports.STORE_USER = STORE_USER;
+exports.storeUser = storeUser;
