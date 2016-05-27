@@ -18,7 +18,7 @@
     "watch:js": "npm run build:js && webpack --watch",
     "clean:js": "rm -f build/$npm_package_name.$npm_package_version.js build/$npm_package_name.$npm_package_version.js.map",
     "clean:css": "rm build/css/main.css",
-    "watch:css": "sass sass:css --watch",
+    "watch:css": "sass sass:build/css --watch",
     "build:jsx": "npm run clean:jsx && webpack",
     "watch:jsx": "npm run build:jsx && webpack --watch",
     "clean:jsx": "rm -f build/$npm_package_name.$npm_package_version.jsx build/$npm_package_name.$npm_package_version.jsx.map"
