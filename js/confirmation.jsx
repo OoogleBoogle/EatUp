@@ -45,13 +45,10 @@ var ConfirmationPage = React.createClass({
         <div className="restaurantResult">
           <ul>
             <li> <a href={this.props.eatup.restaurant[0].url} target="_blank" rel="noopener noreferrer">{this.props.eatup.restaurant[0].url} </a></li>
-            <li><img src={this.props.eatup.restaurant[0].photo} /></li>
             <li>{this.props.eatup.restaurant[0].name}</li>
             {restaurantAddress}
             <li>Rating: {this.props.eatup.restaurant[0].rating}</li>
           </ul>
-        </div>
-        <div>
           <ConfirmButton confirmFunction={this.saveUser} text="I'd eat that"/>
         </div>
       </section>
