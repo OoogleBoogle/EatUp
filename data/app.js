@@ -18,15 +18,13 @@ app.use(function(req, res, next) {
     next();
 });
 
-// mongoose.connection.on('error', console.error.bind(console, 'CONNECTION ERROR MESSAGE:'));
-// mongoose.connection.once('open', function() {
-//     console.log('DB CONNECTION SUCCESSFUL');
-// });
+mongoose.connection.on('error', console.error.bind(console, 'CONNECTION ERROR MESSAGE:'));
+mongoose.connection.once('open', function() {
+    console.log('DB CONNECTION SUCCESSFUL');
+});
 
-console.log('THIS IS THE USER', User);
-
-app.get('/users', function(req,res) {
-    User.find({}, function(err, users){
+app.get('/users', function(req, res) {
+    User.find({}, function(err, users) {
         res.json(users);
     });
 });
@@ -34,7 +32,6 @@ app.get('/users', function(req,res) {
 // TODO: retrieve object from Redux
 
 app.post('/saveuser', function(req, res) {
-    console.log('presave');
     var newUser = new User({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -43,43 +40,43 @@ app.post('/saveuser', function(req, res) {
         restaurantName: req.body.restaurantName,
         city: req.body.city,
         state: req.body.state
-        // matched?
+            // matched?
     });
-    console.log('post setup');
 
-    User.findOne({venue_id: req.body.venue_id}, function(err, user){
+    User.findOne({
+        venue_id: req.body.venue_id
+    }, function(err, user) {
         //res.json(user);
-        if(user) {
+        if (user) {
             // log new user and the matching user (names)
             console.log(user.firstName);
             // update new and matching user paired to true
             newUser.paired = true;
             user.paired = true;
             user.save();
-            mailer.pairedMail(user.email, user.firstName, newUser.firstName, newUser.restaurantName);
-            mailer.pairedMail(newUser.email, newUser.firstName, user.firstName, newUser.restaurantName);
-            console.log("DATE FOUND!", Meal);
-            console.log(newUser);
-            console.log(user);
-
-            // send them both an email / start with logging that htey need email
+            if (newUser.paired === true && user.paired === true) {
+                mailer.pairedMail(user.email, user.firstName, newUser.firstName, newUser.restaurantName);
+                mailer.pairedMail(newUser.email, newUser.firstName, user.firstName, newUser.restaurantName);
+            }
             console.log('found a match!');
-
         } else {
-            console.log('no match');
+            mailer.confirmMail(newUser.email, newUser.firstName);
+            console.log('Email has been sent');
         }
     });
 
     newUser.save(function(err) {
         if (err) return handleError(err);
-        res.json({message: 'saved!'});
+        res.json({
+            message: 'saved!'
+        });
     });
 });
 
 //TODO: exclude repeat names upon querying city, foodType, and venueName
 
 app.listen(3000, function() {
-    console.log('Running on port 8080');
+    console.log('Running on port 3000');
 });
 
 // queryUsers.exec(function(err, user) {
@@ -88,6 +85,3 @@ app.listen(3000, function() {
 //         user: user
 //     });
 // });
-
-//queryUser('Stone Cold Steve Austin');
-//findUser('Kaeside');

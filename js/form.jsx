@@ -17,13 +17,12 @@ var Form = React.createClass({
     var geoOptions = {
        timeout: 10 * 1000
     }
-
+    // var that = this;
     var geoSuccess = function(position) {
       startPos = position;
       document.getElementById("latitude").value = position.coords.latitude;
       document.getElementById("longitude").value = position.coords.longitude;
     };
-
     var geoError = function(error) {
       console.log('Error occurred. Error code: ' + error.code);
       // error.code can be:
@@ -47,15 +46,17 @@ var Form = React.createClass({
       email: this.refs.email.value,
       foodType: foodType
     };
-
     var latitude = this.refs.latitude.value;
     var longitude = this.refs.longitude.value;
+
+    console.log('the user!!', user);
 
     this.props.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
     this.props.dispatch(userActions.storeUser(user));
     hashHistory.push("/confirmationpage")
   },
   render: function() {
+    console.log('getting restaurant in form', document.body.innerHTML);
     return (
       <form onSubmit={this.getRestaurant} className="restaurantSearch">
         <input id="latitude" ref="latitude" hidden="true" type="text"></input>
@@ -67,7 +68,7 @@ var Form = React.createClass({
         <div>
           <input type="text" ref="email" placeholder="Enter your email..."></input>
         </div>
-        <h3>What do you want to eat today?</h3>
+        <p>What do you want to eat today?</p>
         <select ref="foodType" id="foodType" className="foodTypeSelector">
           <option value="chinese">Chinese</option>
           <option value="indian">Indian</option>
@@ -96,6 +97,7 @@ var FormButton = React.createClass({
 });
 
 var mapStateToProps = function(state, props) {
+  console.log('mapping state to props in form');
   return {
     eatup: state
   };
