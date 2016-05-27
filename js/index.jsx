@@ -20,26 +20,6 @@ var IndexRoute = router.IndexRoute;
 var Link = require('react-router').Link
 
 var EatUp = React.createClass({
-  // getRestaurant: function(data) {
-  //   var latitude = this.state.lat;
-  //   var longitude = this.state.long;
-  //   var foodSelector = document.getElementById("foodType");
-  //   var foodType = data.foodType;
-  //
-  //   this.setState({
-  //     firstName: data.firstName,
-  //     lastName: data.lastName,
-  //     email: data.email,
-  //     foodType: data.foodType
-  //   });
-  //   console.log(latitude, longitude, foodType);
-  //   console.log('getting restaurant', this.state);
-  //
-  //
-  //   this.props.dispatch(restaurantActions.getRestaurant(longitude, latitude, foodType));
-  //   console.log('getting restaurant');
-  //
-  // },
   render: function() {
     //TODO: if the textboxes are all filled out, diabled = false
     return (

@@ -25,8 +25,6 @@ var ConfirmationPage = React.createClass({
       venue_id: this.props.eatup.restaurant[0].venue_id
     };
 
-    console.log('the userrrr', user);
-
     this.props.dispatch(actions.saveUser(user));
     hashHistory.push("/confirmed")
   },
@@ -71,7 +69,6 @@ var ConfirmButton = React.createClass({
 });
 
 var mapStateToProps = function(state, props) {
-  console.log('mapping state to props');
   return {
     eatup: state
   };
