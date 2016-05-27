@@ -3,7 +3,7 @@
   padding: 0;
   background: #fff url('https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=9bd244971b9cb52a8418cf2f66fce464') no-repeat center center;
   background-size: cover;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .container {
@@ -16,7 +16,7 @@
   h1 {
     font-family: 'hamburgerheavenregular';
     font-size: 5.3em;
-    margin-bottom: .25em;
+    margin-bottom: 0;
     margin-top: 0;
     color: white;
     background-color: #20615B;
@@ -24,6 +24,9 @@
   }
   p {
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.5em;
+    font-size: 2.5em;
+    background-color: rgba(255, 255, 255, 0.3);
+    margin-top: 0;
+    padding: 0.5em 0em;
   }
 }

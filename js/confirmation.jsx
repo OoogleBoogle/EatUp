@@ -44,12 +44,11 @@ var ConfirmationPage = React.createClass({
         <h4>Almost there! What do you think of this restaurant? Please hit confirm if you'd like to eat there!</h4>
         <div className="restaurantResult">
           <ul>
-            <li>{this.props.eatup.restaurant[0].url}</li>
-            <li>{this.props.eatup.restaurant[0].photo}</li>
+            <li> <a href={this.props.eatup.restaurant[0].url} target="_blank" rel="noopener noreferrer">{this.props.eatup.restaurant[0].url} </a></li>
+            <li><img src={this.props.eatup.restaurant[0].photo} /></li>
             <li>{this.props.eatup.restaurant[0].name}</li>
             {restaurantAddress}
-            <li>{this.props.eatup.restaurant[0].city}</li>
-            <li>{this.props.eatup.restaurant[0].rating}</li>
+            <li>Rating: {this.props.eatup.restaurant[0].rating}</li>
           </ul>
         </div>
         <div>

@@ -67,7 +67,7 @@ var Form = React.createClass({
         <div>
           <input type="text" ref="email" placeholder="Enter your email..."></input>
         </div>
-        <h3>What do you want to eat today?</h3>
+        <p>What do you want to eat today?</p>
         <select ref="foodType" id="foodType" className="foodTypeSelector">
           <option value="chinese">Chinese</option>
           <option value="indian">Indian</option>

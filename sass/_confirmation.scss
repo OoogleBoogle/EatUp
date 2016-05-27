@@ -1,0 +1,16 @@
+.confirmationPage {
+  font-family: 'Open sans', sans-serif;
+  font-size: 1.2em;
+  button {
+    @extend %button;
+  }
+}
+
+.restaurantResult {
+  font-family: 'Open sans', sans-serif;
+  font-size: 1em;
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+}
