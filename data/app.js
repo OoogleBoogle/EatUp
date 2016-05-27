@@ -25,8 +25,8 @@ app.use(function(req, res, next) {
 
 console.log('THIS IS THE USER', User);
 
-app.get('/users', function(req,res) {
-    User.find({}, function(err, users){
+app.get('/users', function(req, res) {
+    User.find({}, function(err, users) {
         res.json(users);
     });
 });
@@ -43,24 +43,28 @@ app.post('/saveuser', function(req, res) {
         restaurantName: req.body.restaurantName,
         city: req.body.city,
         state: req.body.state
-        // matched?
+            // matched?
     });
     console.log('post setup');
 
-    User.findOne({venue_id: req.body.venue_id}, function(err, user){
+    User.findOne({
+        venue_id: req.body.venue_id
+    }, function(err, user) {
         //res.json(user);
-        if(user) {
+        if (user) {
             // log new user and the matching user (names)
             console.log(user.firstName);
             // update new and matching user paired to true
             newUser.paired = true;
             user.paired = true;
             user.save();
-            mailer.pairedMail(user.email, user.firstName, newUser.firstName, newUser.restaurantName);
-            mailer.pairedMail(newUser.email, newUser.firstName, user.firstName, newUser.restaurantName);
-            console.log("DATE FOUND!", Meal);
-            console.log(newUser);
-            console.log(user);
+            if (newUser.paired === true && user.paired === true) {
+                mailer.pairedMail(user.email, user.firstName, newUser.firstName, newUser.restaurantName);
+                mailer.pairedMail(newUser.email, newUser.firstName, user.firstName, newUser.restaurantName);
+                console.log("DATE FOUND!", Meal);
+                console.log(newUser);
+                console.log(user);
+            }
 
             // send them both an email / start with logging that htey need email
             console.log('found a match!');
@@ -72,7 +76,9 @@ app.post('/saveuser', function(req, res) {
 
     newUser.save(function(err) {
         if (err) return handleError(err);
-        res.json({message: 'saved!'});
+        res.json({
+            message: 'saved!'
+        });
     });
 });
 
@@ -88,6 +94,3 @@ app.listen(3000, function() {
 //         user: user
 //     });
 // });
-
-//queryUser('Stone Cold Steve Austin');
-//findUser('Kaeside');
