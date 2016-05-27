@@ -17,10 +17,11 @@ exports.restaurantReducer = function(state, action) {
   state = state || initialState;
   if (action.type === actions.GET_RESTAURANT_SUCCESS) {
     var venue = action.data.groups[0].items[0].venue // common location of needed params
+    console.log("PHOTO? ", venue);
     var newState = update(state, {0: {
       $set: {
         url: venue.url,
-        photo: venue.photos.groups[0], // never appears to be photos....
+        photo: venue.photos.groups[0].items[0].prefix + '200x200' + venue.photos.groups[0].items[0].suffix, 
         name: venue.name,
         formattedAddress: venue.location.formattedAddress, // array of full address, front end can loop for ease
         city: venue.location.city, // saving city seperatly for matching
