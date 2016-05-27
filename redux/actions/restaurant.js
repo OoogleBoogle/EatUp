@@ -5,7 +5,7 @@ var ids = require('../secrets.js'); // seperate file for api ID's so not checked
 var getRestaurant = function(lat, long, foodType) {
   console.log('foursquare');
   var options = {
-    base_url: 'https://api.foursquare.com/v2/venues/explore?', // using 'explore' endpoint over 'search', yealded better 'top' results.
+    base_url: 'https://api.foursquare.com/v2/venues/explore?venuePhotos=1&', // using 'explore' endpoint over 'search', yealded better 'top' results.
     coords: 'll=' + long + ',' + lat,
     CLIENT_ID: '&client_id=' + ids.CLIENT_ID,
     CLIENT_SECRET: '&client_secret=' + ids.CLIENT_SECRET,
