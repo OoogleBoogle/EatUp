@@ -1,0 +1,11 @@
+{
+    "production": {
+        "url": "mongodb://localhost/eatup"
+    },
+    "test": {
+        "url": "mongodb://localhost/eatup-test"
+    },
+    "development": {
+        "url": "mongodb://localhost/eatup-dev"
+    }
+}
