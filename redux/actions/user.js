@@ -4,7 +4,7 @@ var SAVE_USER = 'SAVE_USER';
 // making POST request to backend with user details
 var saveUser = function(user) {
   return function(dispatch) {
-    return fetch('/saveuser', {
+    return fetch('http://localhost:3000/saveuser', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
