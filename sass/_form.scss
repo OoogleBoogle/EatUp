@@ -1,3 +1,38 @@
-body {
-  background-color: blue;
+%button {
+  border: 0;
+  padding: .5em;
+  display: block;
+  margin: 1em auto;
+  background-color: darken(#61b292, 10%);
+  border-radius: 5px;
+  color: #eee;
+  font-weight: bold;
+  transition: background-color .3s;
+  &:hover {
+    background-color: #61b292;
+  }
+}
+
+.restaurantSearch {
+  margin-top: 2em;
+  input {
+    margin: .3em;
+    padding: .3em;
+    border: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+  }
+  button {
+    @extend %button;
+  }
+  p {
+    font-family: 'Open Sans', sans-serif;
+    text-shadow: 1px 1px 10px white;
+    font-size: 1.25em;
+    background-color: transparent;
+  }
+}
+
+.foodTypeSelector {
+  border: 0;
 }

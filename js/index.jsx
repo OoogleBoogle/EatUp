@@ -23,11 +23,11 @@ var EatUp = React.createClass({
   render: function() {
     //TODO: if the textboxes are all filled out, diabled = false
     return (
-      <div>
+      <div className="container">
         <h1>
           EatUp
         </h1>
-        <p>Let us find a dining companion for you!</p>
+        <p>Go meet up and eat up!</p>
         <div>
           {this.props.children}
         </div>
