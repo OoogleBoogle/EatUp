@@ -18,12 +18,10 @@ app.use(function(req, res, next) {
     next();
 });
 
-// mongoose.connection.on('error', console.error.bind(console, 'CONNECTION ERROR MESSAGE:'));
-// mongoose.connection.once('open', function() {
-//     console.log('DB CONNECTION SUCCESSFUL');
-// });
-
-console.log('THIS IS THE USER', User);
+mongoose.connection.on('error', console.error.bind(console, 'CONNECTION ERROR MESSAGE:'));
+mongoose.connection.once('open', function() {
+    console.log('DB CONNECTION SUCCESSFUL');
+});
 
 app.get('/users', function(req, res) {
     User.find({}, function(err, users) {
@@ -34,7 +32,6 @@ app.get('/users', function(req, res) {
 // TODO: retrieve object from Redux
 
 app.post('/saveuser', function(req, res) {
-    console.log('presave');
     var newUser = new User({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -45,7 +42,6 @@ app.post('/saveuser', function(req, res) {
         state: req.body.state
             // matched?
     });
-    console.log('post setup');
 
     User.findOne({
         venue_id: req.body.venue_id
@@ -61,16 +57,11 @@ app.post('/saveuser', function(req, res) {
             if (newUser.paired === true && user.paired === true) {
                 mailer.pairedMail(user.email, user.firstName, newUser.firstName, newUser.restaurantName);
                 mailer.pairedMail(newUser.email, newUser.firstName, user.firstName, newUser.restaurantName);
-                console.log("DATE FOUND!", Meal);
-                console.log(newUser);
-                console.log(user);
             }
-
-            // send them both an email / start with logging that htey need email
             console.log('found a match!');
-
         } else {
-            console.log('no match');
+            mailer.confirmMail(newUser.email, newUser.firstName);
+            console.log('Email has been sent');
         }
     });
 

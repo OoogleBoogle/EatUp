@@ -7,7 +7,7 @@ var confirmMail = function(to, firstName) {
   mail.to = to;
   mail.from = 'simattfield@gmail.com',
   mail.subject = 'Hi from EatUp',
-  mail.text = "Hay " + firstName + "! Your request has been saved. We'll contact you again when we've found you a match.",
+  mail.text = "Hey " + firstName + "! Your request has been saved. We'll contact you again when we've found you a match.",
   mail.html = "<h3>Hay " + firstName + "! Your request has been saved. We'll contact you again when we've found you a match.</h3>",
   mail.setFilters({
     'templates': {
