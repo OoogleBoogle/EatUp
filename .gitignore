@@ -1,1 +1,6 @@
 node_modules
+redux/secrets.js
+mailer/secrets.js
+.sass-cache
+npm-debug.log
+build
