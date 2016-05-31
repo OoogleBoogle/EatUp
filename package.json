@@ -8,7 +8,7 @@
     "watch": "npm run watch:html & npm run watch:css & npm run watch:jsx",
     "test": "mocha --compilers js:babel-register test/**/*.js*",
     "serve": "http-server build",
-    "start:server": "nodemon ./index.js",
+    "start": "nodemon ./data/app.js",
     "mkdir": "mkdir -p build",
     "clean": "rm -rf build",
     "build:html": "npm run clean:html && cp index.html build/",
