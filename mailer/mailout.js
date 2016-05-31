@@ -1,5 +1,10 @@
-var secrets = require('./secrets');
-var sendgrid = require('sendgrid')(secrets.API_KEY);
+if (!process.env.API_KEY){
+    
+    var secrets = require('./secrets');
+    var sendgrid = require('sendgrid')(secrets.API_KEY);
+} else {
+    var sendgrid = require('sendgrid')(process.env.API_KEY);
+}
 
 var confirmMail = function(to, firstName) {
   // var email = new sendgrid.Email();
