@@ -5,7 +5,7 @@ EatUp is an app that helps people find the best restaurants and dining companion
 
 ## Screenshots
 
-![alt text](http://imgur.com/6yie6SX)
+![alt text][http://imgur.com/6yie6SX]
 
 ![alt text](https://www.dropbox.com/s/f8l3jrz1oc2bonp/Screen%20Shot%202016-05-27%20at%201.03.38%20PM.png “Confirmation page“)
 
