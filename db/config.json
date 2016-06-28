@@ -1,11 +1,11 @@
 {
     "production": {
-        "url": "mongodb://localhost/eatup"
+        "url": "mongodb://kaeside:DBm0ng0@ds019893.mlab.com:19893/eatup"
     },
     "test": {
         "url": "mongodb://localhost/eatup-test"
     },
     "development": {
-        "url": "mongodb://localhost/eatup-dev"
+        "url": "mongodb://localhost/eatup"
     }
 }

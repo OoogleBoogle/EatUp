@@ -1,24 +1,29 @@
+/*
+1. minifiying CSS / sass
+2. Js transpiling (JSX)
+3. Providing Index endpoint
+4. Running the server
+*/
 {
   "name": "eatup",
   "version": "1.0.0",
   "description": "",
   "main": "./js/index.jsx",
   "scripts": {
-    "build": "npm run clean && npm run mkdir && npm run build:html && npm run build:jsx",
+    "build": "npm run clean && npm run mkdir && npm run build:html && npm run build:jsx && sass --watch sass:public/css",
     "watch": "npm run watch:html & npm run watch:css & npm run watch:jsx",
     "test": "mocha --compilers js:babel-register test/**/*.js*",
-    "serve": "http-server build",
     "start": "nodemon ./data/app.js",
-    "mkdir": "mkdir -p build",
-    "clean": "rm -rf build",
-    "build:html": "npm run clean:html && cp index.html build/",
+    "mkdir": "mkdir -p public && mkdir -p public/css",
+    "clean": "rm -rf public",
+    "build:html": "npm run clean:html && cp index.html public/",
     "watch:html": "npm run build:html && chokidar index.html -c 'npm run build:html'",
-    "clean:html": "rm -f build/index.html",
+    "clean:html": "rm -f public/index.html",
     "build:js": "npm run clean:js && webpack",
     "watch:js": "npm run build:js && webpack --watch",
     "clean:js": "rm -f build/$npm_package_name.$npm_package_version.js build/$npm_package_name.$npm_package_version.js.map",
-    "clean:css": "rm build/css/main.css",
-    "watch:css": "sass sass:build/css --watch",
+    "clean:css": "rm public/css/main.css",
+    "watch:css": "cp -rf assets public/ && sass sass:public/css --watch",
     "build:jsx": "npm run clean:jsx && webpack",
     "watch:jsx": "npm run build:jsx && webpack --watch",
     "clean:jsx": "rm -f build/$npm_package_name.$npm_package_version.jsx build/$npm_package_name.$npm_package_version.jsx.map"

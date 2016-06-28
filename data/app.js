@@ -17,6 +17,7 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+app.use(express.static('public'));
 
 mongoose.connection.on('error', console.error.bind(console, 'CONNECTION ERROR MESSAGE:'));
 mongoose.connection.once('open', function() {
