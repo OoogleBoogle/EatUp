@@ -76,8 +76,10 @@ app.post('/saveuser', function(req, res) {
 
 //TODO: exclude repeat names upon querying city, foodType, and venueName
 
-app.listen(3000, function() {
-    console.log('Running on port 3000');
+var port = Number(process.env.Port || 3000);
+
+app.listen(port, function() {
+    console.log('Running on port ' + port);
 });
 
 // queryUsers.exec(function(err, user) {
