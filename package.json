@@ -2,6 +2,9 @@
   "name": "eatup",
   "version": "1.0.0",
   "description": "",
+  "engines": {
+    "node": "6.0.0"
+},
   "main": "./js/index.jsx",
   "scripts": {
     "build": "npm run clean && npm run mkdir && npm run build:html && npm run build:jsx && sass --watch sass:public/css",
